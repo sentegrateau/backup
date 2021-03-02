@@ -1,1 +1,39 @@
-/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+body {
+  font-family: Roboto, Arial, sans-serif;
+  margin: 0;
+  padding: 30px;
+}
+
+.version-info {
+  font-size: 8pt;
+  float: right;
+  margin: 8px;
+}
+
+.pos-column {
+  padding: 12px;
+  max-height: 530px;
+  overflow: auto;
+}
+
+.pos-ul {
+  list-style: none;
+  text-align: center;
+}
+
+.pos-ul  li {
+  border: 1px solid #eee;
+  padding: 12px;
+}
+
+.pos-ul li:hover { 
+  background: #eee !important;
+}
+
+.pos-ul > .selected {
+  background: silver !important;
+}
+
+
