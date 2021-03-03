@@ -9,11 +9,13 @@ import {MatCardModule} from '@angular/material/card';
 import { PosHeaderComponent } from './pos-header/pos-header.component';
 import { PosPackagesComponent } from './pos-packages/pos-packages.component';
 import { PosRoomsComponent } from './pos-rooms/pos-rooms.component';
+import { ItemsComponent } from './items/items.component';
+import { DevicesComponent } from './devices/devices.component';
 
 
 
 @NgModule({
-  declarations: [PosComponent, PosHeaderComponent, PosPackagesComponent, PosRoomsComponent],
+  declarations: [PosComponent, PosHeaderComponent, PosPackagesComponent, PosRoomsComponent, ItemsComponent, DevicesComponent],
   imports: [
     CommonModule,
     PosRoutingModule,

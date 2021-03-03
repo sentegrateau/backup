@@ -17,6 +17,17 @@ body {
   max-height: 530px;
   overflow: auto;
 }
+.pos-column-description {
+  border: 1px solid #eee;
+  position: relative;
+  min-height: 500px;
+}
+
+.pos-column-summery {
+  border: 1px solid #eee;
+  position: relative;
+  min-height: 530px;
+}
 
 .pos-ul {
   list-style: none;
@@ -35,5 +46,10 @@ body {
 .pos-ul > .selected {
   background: silver !important;
 }
-
+.pos-ul li {
+  overflow: auto;
+}
+.pos-ul li img {
+  float: left;
+}
 

@@ -1,0 +1,10 @@
+        
+    <ul class="pos-ul">
+        <li *ngFor="let item of items" id="{{item.id}}" [class]="item.active ? 'selected' : '' " (click)="handelClick(item)">
+            <ng-container *ngIf="item.imgUrl" >
+                <img [src]="item.imgUrl" width="50">  
+            </ng-container>
+            
+            {{item.label}} 
+        </li>
+    </ul>
