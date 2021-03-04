@@ -21,6 +21,7 @@ body {
   border: 1px solid #eee;
   position: relative;
   min-height: 500px;
+  text-align: left;
 }
 
 .pos-column-summery {
@@ -53,3 +54,25 @@ body {
   float: left;
 }
 
+.description-footer-btn {
+  float: left;height: 42px;
+  background-color:transparent;color:black;border-radius:0px;border-color:#a3a098;width: 20%;
+  border-right: none;
+}
+.description-footer-btn-last {
+  border-right: solid #a3a098 !important;
+}
+
+.cart, .total {
+  text-align: left !important;
+}
+
+.cart span, .total span {
+  float: right;
+}
+.no-padding {
+  padding: 0 !important;
+}
+.btn-footer {
+  margin-right: 10px;
+}

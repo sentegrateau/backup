@@ -1,7 +1,19 @@
-<div class="row"> </div>
-<div class="row"> </div>
-
-
+<div class="row" style="text-align: center;">
+    <div class="col-md-12">
+        <h2>Order Sentegrate Smart Home Kit</h2>
+    </div>
+</div>
+<br>
+<form>
+    
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select A Standard or Saved Package: </label>
+        <div class="col-sm-4">
+        <input type="text" class="form-control">
+        </div>
+    </div>
+</form>
+<br>
 
 <ng-container >
    <app-pos-header></app-pos-header>
@@ -26,15 +38,39 @@
             <div class="col-md-6 ptcontainer pos-column mr-3">
                 <app-devices></app-devices>
             </div>
-            <div class="col-md-6 ptcontainer pos-column pos-column-description">
 
+            <div class="col-md-6 ptcontainer pos-column pos-column-description">
+                <div style="padding:10px">
+                    <p class="title">ZWave Controller (Fibaro)</p>
+                    <b>Key Functions: </b><br>
+                    <p class="description">Main Automation Controller providing control interface through Fibaro Mobile, Tablet App and Fibaro Web interface. 
+                        HC3 can communicate and control a large range of Zwave and IP based devices.</p>
+
+                        <div align="center" style="height: 41px; left:0; position: absolute; bottom: 0; text-align: center;width: 100%;">
+                            <button  class="decrease description-footer-btn">-</button>
+                            <button class="qty description-footer-btn" >0</button>
+                            
+                            <button class="increase description-footer-btn">+</button>
+                            <button style="width: 35%;" class="addcart description-footer-btn description-footer-btn-last">Add ⇒</button> 
+                        </div>
+                </div>
             </div>
+
         </div>
     </div>
 
     <div class="col-md-3">
-        <div class="ptcontainer pos-column pos-column-summery">
+        <div class="pos-ul ptcontainer pos-column pos-column-summery">
+            <ul class="cart"></ul>
+
+            <ul style="position: absolute; bottom: 0px; left: 0; width: 100%; margin: 0; padding: 0;">
+                <li class="total" total="0">Total Amount <span>$0</span></li>
+            </ul>
 
         </div>
     </div>
 </div>
+
+
+<app-pos-footer></app-pos-footer>
+

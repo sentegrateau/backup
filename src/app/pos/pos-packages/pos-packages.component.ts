@@ -1,27 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { PosHnandler } from "../../handler/pos.handler";
+import { PosService } from '../pos.service';
+import { Items } from "../../model/item.model";
+
 
 @Component({
   selector: 'app-pos-packages',
   templateUrl: './pos-packages.component.html',
   styleUrls: ['./pos-packages.component.scss']
 })
-export class PosPackagesComponent extends PosHnandler implements OnInit {
+export class PosPackagesComponent implements OnInit {
+  items : Items[] = [];
+
+  constructor(private posService: PosService) { 
+      
+  }
 
   ngOnInit(): void {
-    for (let index = 0; index < 5; index++) {
-
-      this.items.push({
-        label : `Package ${index}`,
-        id: index,
-        imgUrl : null,
-        active : index == 1 ?  true : false
-      });
-      
-    }
-   
+    this.get('package', 10)
   }
+
   handleChange (event: any) : void  {
     console.log(event);
+  }
+
+  get(type : string, limit: number): void {
+    limit = limit || 10;
+    type = type || "package"
+    this.posService.get(type, limit)
+        .subscribe(items => this.items = items);
   }
 }

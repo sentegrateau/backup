@@ -11,11 +11,12 @@ import { PosPackagesComponent } from './pos-packages/pos-packages.component';
 import { PosRoomsComponent } from './pos-rooms/pos-rooms.component';
 import { ItemsComponent } from './items/items.component';
 import { DevicesComponent } from './devices/devices.component';
+import { PosFooterComponent } from './pos-footer/pos-footer.component';
 
 
 
 @NgModule({
-  declarations: [PosComponent, PosHeaderComponent, PosPackagesComponent, PosRoomsComponent, ItemsComponent, DevicesComponent],
+  declarations: [PosComponent, PosHeaderComponent, PosPackagesComponent, PosRoomsComponent, ItemsComponent, DevicesComponent, PosFooterComponent],
   imports: [
     CommonModule,
     PosRoutingModule,
