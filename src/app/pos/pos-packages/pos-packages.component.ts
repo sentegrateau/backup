@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { PosService } from '../pos.service';
+import { Component, OnInit, Input ,Output, EventEmitter  } from '@angular/core';
 import { Items } from "../../model/item.model";
 
 
@@ -9,24 +8,21 @@ import { Items } from "../../model/item.model";
   styleUrls: ['./pos-packages.component.scss']
 })
 export class PosPackagesComponent implements OnInit {
-  items : Items[] = [];
 
-  constructor(private posService: PosService) { 
+  @Input() items : Items[] = []; 
+  @Output() onClick = new EventEmitter();
+
+  constructor() { 
       
   }
 
   ngOnInit(): void {
-    this.get('package', 10)
+   
   }
 
   handleChange (event: any) : void  {
-    console.log(event);
+    this.onClick.emit(event);
   }
 
-  get(type : string, limit: number): void {
-    limit = limit || 10;
-    type = type || "package"
-    this.posService.get(type, limit)
-        .subscribe(items => this.items = items);
-  }
+  
 }

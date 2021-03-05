@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Items } from "../../model/item.model";
+import { Component, OnInit,  Input ,Output, EventEmitter} from '@angular/core';
+import { Items  } from "../../model/item.model";
 import { PosService } from '../pos.service';
 
 @Component({
@@ -8,25 +8,23 @@ import { PosService } from '../pos.service';
   styleUrls: ['./devices.component.scss']
 })
 export class DevicesComponent implements OnInit {
-  items : Items[] = [];
+ 
 
-  constructor(private posService: PosService) { 
+  @Input() items : Items[] = []; 
+  @Output() onClick = new EventEmitter();
+
+  constructor() { 
       
   }
 
   ngOnInit(): void {
-    this.get('device', 7)
+    //this.get('device', 7)
   }
 
   handleChange (event: any) : void  {
-    console.log(event);
+    this.onClick.emit(event);
   }
 
-  get(type : string, limit: number): void {
-    limit = limit || 10;
-    type = type || "device"
-    this.posService.get(type, limit)
-        .subscribe(items => this.items = items);
-  }
+  
 
 }

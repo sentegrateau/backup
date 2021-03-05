@@ -16,7 +16,9 @@ import { PosFooterComponent } from './pos-footer/pos-footer.component';
 
 
 @NgModule({
-  declarations: [PosComponent, PosHeaderComponent, PosPackagesComponent, PosRoomsComponent, ItemsComponent, DevicesComponent, PosFooterComponent],
+  declarations: [PosComponent, PosHeaderComponent, PosPackagesComponent, PosRoomsComponent, ItemsComponent, 
+    DevicesComponent, PosFooterComponent
+  ],
   imports: [
     CommonModule,
     PosRoutingModule,

@@ -21,14 +21,14 @@
 
 <div class="row text-center" > 
     <div class="col-md-2 ptcontainer pos-column">
-        <app-pos-packages>
+        <app-pos-packages [items]="items" (onClick)="handleChange($event)">
             
         </app-pos-packages>
     </div>
     
     <div class="col-md-2 ptcontainer pos-column">
 
-        <app-pos-rooms>
+        <app-pos-rooms [items]="roomItems" (onClick)="handleChange($event)">
             
         </app-pos-rooms>
     </div>
@@ -36,7 +36,9 @@
     <div class="col-md-5">
         <div class="row">
             <div class="col-md-6 ptcontainer pos-column mr-3">
-                <app-devices></app-devices>
+                <app-devices [items]="devicesItems" (onClick)="handleChange($event)">
+
+                </app-devices>
             </div>
 
             <div class="col-md-6 ptcontainer pos-column pos-column-description">
