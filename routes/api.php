@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::resource("package", "App\Http\Controllers\PackageController");
+Route::resource("room", "App\Http\Controllers\RoomController");
+Route::resource("partner", "App\Http\Controllers\PartnerController");
+Route::resource("package_room", "App\Http\Controllers\PackageRoomController");
+Route::resource("device", "App\Http\Controllers\DeviceController");
