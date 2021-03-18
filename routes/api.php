@@ -17,11 +17,11 @@ use App\Http\Controllers\PackageController;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post("/package", [PackageController::class, 'store']);
-Route::get("/package", [PackageController::class, 'index']);
-Route::get("/packagesAll", [PackageController::class, 'packagesAll']);
+// Route::post("/package", [PackageController::class, 'store']);
+// Route::get("/package", [PackageController::class, 'index']);
 
-// Route::resource("package", "App\Http\Controllers\PackageController");
+
+Route::resource("package", "App\Http\Controllers\PackageController");
 // Route::resource("package", "App\Http\Controllers\PackageController");
 Route::resource("room", "App\Http\Controllers\RoomController");
 Route::resource("partner", "App\Http\Controllers\PartnerController");

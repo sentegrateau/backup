@@ -43,33 +43,6 @@ class PackageController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function packagesAll()
-    {
-        try {
-
-            $packages = Package::all();
-
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => [],
-                    'data' => $packages
-                ]
-            );
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => true,
-                'message' => $e->getMessage(),
-                'data' => null,
-            ], 400);
-        }
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

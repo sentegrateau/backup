@@ -14,7 +14,24 @@ class DeviceController extends Controller
      */
     public function index()
     {
-        //
+        try {
+
+            $devices = Device::all();
+
+            return response()->json(
+                [
+                    'error' => false,
+                    'message' => [],
+                    'data' => $devices
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 400);
+        }
     }
 
     /**

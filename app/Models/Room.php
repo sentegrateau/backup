@@ -10,7 +10,7 @@ class Room extends Model
 
     use HasFactory;
 
-    protected $fillable = ['room_id','partner_id','name','description'];
+    protected $fillable = ['room_id','partner_id','name','description', 'package_id'];
 
     public function packages()
     {
@@ -18,6 +18,11 @@ class Room extends Model
             'package__rooms',
             'room_id',
             'package_id');
+    }
+
+    public function package()
+    {
+        return $this->belongsTo('App\Package');
     }
 
     public function partners()
