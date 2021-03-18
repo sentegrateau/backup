@@ -24,8 +24,6 @@ class CreatePackagesTable extends Migration
             ->references('id')
             ->on('partners');
 
-            
-
         });
     }
 

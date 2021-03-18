@@ -39,7 +39,34 @@ class PackageController extends Controller
      */
     public function create()
     {
-        
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function packagesAll()
+    {
+        try {
+
+            $packages = Package::all();
+
+            return response()->json(
+                [
+                    'error' => false,
+                    'message' => [],
+                    'data' => $packages
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 400);
+        }
     }
 
     /**
@@ -51,7 +78,6 @@ class PackageController extends Controller
     public function store(Request $request)
     {
        // dd($request->all());
-
        try {
         $rules = [
             'name' => 'required',
@@ -64,11 +90,11 @@ class PackageController extends Controller
                 'data' => null,
             ], 422);
         }
-        
+
          $package = new Package($request->all());
 
          $package->save();
-        
+
         return response()->json(
         [
             'error' => false,

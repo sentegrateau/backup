@@ -22,11 +22,13 @@ class CreatePackageRoomsTable extends Migration
 
             $table->foreign('package_id')
             ->references('id')
-            ->on('packages');
+            ->on('packages')
+                ->onDelete('cascade');
 
             $table->foreign('room_id')
             ->references('id')
-            ->on('rooms');
+            ->on('rooms')
+                ->onDelete('cascade');
         });
     }
 

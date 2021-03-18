@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PackageController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,8 +17,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post("/package", [PackageController::class, 'store']);
+Route::get("/package", [PackageController::class, 'index']);
+Route::get("/packagesAll", [PackageController::class, 'packagesAll']);
 
-Route::resource("package", "App\Http\Controllers\PackageController");
+// Route::resource("package", "App\Http\Controllers\PackageController");
+// Route::resource("package", "App\Http\Controllers\PackageController");
 Route::resource("room", "App\Http\Controllers\RoomController");
 Route::resource("partner", "App\Http\Controllers\PartnerController");
 Route::resource("package_room", "App\Http\Controllers\PackageRoomController");

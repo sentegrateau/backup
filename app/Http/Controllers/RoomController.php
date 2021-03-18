@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Package;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Room;
 use Illuminate\Http\Request;
@@ -14,8 +15,31 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
+        try {
+
+            $rooms = Room::all();
+            // dd($packages);
+            foreach($rooms as $r){
+                $r->packages;
+            }
+
+            // $rooms = Room::all();
+            return response()->json(
+                [
+                    'error' => false,
+                    'message' => [],
+                    'data' => $rooms
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 400);
+        }
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -47,11 +71,11 @@ class RoomController extends Controller
                     'data' => null,
                 ], 422);
             }
-            
+
              $room = new Room($request->all());
-    
+
              $room->save();
-            
+
             return response()->json(
             [
                 'error' => false,
