@@ -127,8 +127,23 @@ class DeviceController extends Controller
      * @param  \App\Models\Device  $device
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Device $device)
+    public function destroy($id)
     {
-        //
+        try {
+            $device = Device::where('id', $id)->delete();
+            return response()->json(
+                [
+                    'error' => false,
+                    'message' => ["Deleted Successfully ! "],
+                    'data' => null,
+                ]
+                );
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => true,
+                    'message' => $e->getMessage(),
+                    'data' => null,
+                    ], 400);
+            }
     }
 }

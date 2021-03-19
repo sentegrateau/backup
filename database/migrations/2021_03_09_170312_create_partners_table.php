@@ -20,7 +20,7 @@ class CreatePartnersTable extends Migration
             $table->string('password', 10);
             $table->string('phone', 50);
             $table->string('company', 50);
-            $table->boolean('active');
+            $table->boolean('active')->default(1);
             $table->timestamps();
         });
     }

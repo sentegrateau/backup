@@ -18,15 +18,15 @@ class CreateDevicesTable extends Migration
             $table->bigInteger('partner_id')->unsigned();
             $table->string('name', 50);
             $table->string('description', 200);
-            $table->string('brand', 50);
-            $table->string('model', 50);
-            $table->boolean('active');
-            $table->string('price', 50);
+            $table->string('brand', 50)->nullable();
+            $table->string('model', 50)->nullable();
+            $table->boolean('active')->nullable();
+            $table->string('price', 50)->default(0);
             $table->bigInteger('discount');
             $table->enum('stock_status', ['0','1'])->default(0);
             $table->string('supplier', 50);
-            $table->string('manual_url', 50);
-            $table->string('image', 50);
+            $table->string('manual_url', 50)->nullable();
+            $table->string('image', 50)->nullable();
             $table->timestamps();
 
             $table->foreign('partner_id')
