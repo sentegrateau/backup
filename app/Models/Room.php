@@ -10,9 +10,9 @@ class Room extends Model
 
     use HasFactory;
 
-    protected $fillable = ['room_id','partner_id','name','description', 'package_id'];
+    protected $fillable = ['room_id','partner_id','name','description', 'status'];
 
-    public function packages()
+    /*public function packages()
     {
         return $this->belongsToMany(Package::class,
             'package__rooms',
@@ -23,7 +23,7 @@ class Room extends Model
     public function package()
     {
         return $this->belongsTo('App\Package');
-    }
+    }*/
 
     public function partners()
     {

@@ -10,5 +10,5 @@ class Device extends Model
     use HasFactory;
 
     protected $fillable = ['partner_id','name','description','brand',
-    'model','active','price','image', 'discount', 'supplier'];
+    'model','active','price','image', 'discount', 'supplier', 'status'];
 }

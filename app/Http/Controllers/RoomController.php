@@ -17,7 +17,8 @@ class RoomController extends Controller
     {
         try {
 
-            $rooms = Room::with("packages")->get();
+            // $rooms = Room::with("packages")->get();
+            $rooms = Room::all();
 
             return response()->json(
                 [

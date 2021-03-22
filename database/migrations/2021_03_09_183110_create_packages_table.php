@@ -18,6 +18,7 @@ class CreatePackagesTable extends Migration
             $table->bigInteger('partner_id')->unsigned();
             $table->string('name', 50);
             $table->string('description', 200)->nullable();
+            $table->enum('status', ['0','1'])->default(1);
             $table->timestamps();
 
             $table->foreign('partner_id')

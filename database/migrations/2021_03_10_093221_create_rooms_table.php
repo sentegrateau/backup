@@ -16,18 +16,19 @@ class CreateRoomsTable extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('partner_id')->unsigned();
-            $table->bigInteger('package_id')->unsigned();
+            // $table->bigInteger('package_id')->unsigned();
             $table->string('name', 50);
             $table->string('description', 200)->nullable();
+            $table->enum('status', ['0','1'])->default(1);
             $table->timestamps();
 
             $table->foreign('partner_id')
             ->references('id')
             ->on('partners');
 
-            $table->foreign('package_id')
+            /*$table->foreign('package_id')
             ->references('id')
-            ->on('packages');
+            ->on('packages');*/
         });
     }
 

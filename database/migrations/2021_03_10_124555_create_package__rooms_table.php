@@ -13,10 +13,11 @@ class CreatePackageRoomsTable extends Migration
      */
     public function up()
     {
-        Schema::create('package__rooms', function (Blueprint $table) {
+        Schema::create('package__room__device', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('package_id')->unsigned();
             $table->bigInteger('room_id')->unsigned();
+            $table->bigInteger('device_id')->unsigned();
             $table->integer('number_of_rooms');
             $table->timestamps();
 
@@ -28,6 +29,11 @@ class CreatePackageRoomsTable extends Migration
             $table->foreign('room_id')
             ->references('id')
             ->on('rooms')
+                ->onDelete('cascade');
+
+            $table->foreign('device_id')
+                ->references('id')
+                ->on('devices')
                 ->onDelete('cascade');
         });
     }

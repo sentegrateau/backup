@@ -27,6 +27,7 @@ class CreateDevicesTable extends Migration
             $table->string('supplier', 50);
             $table->string('manual_url', 50)->nullable();
             $table->string('image', 50)->nullable();
+            $table->enum('status', ['0','1'])->default(1);
             $table->timestamps();
 
             $table->foreign('partner_id')
