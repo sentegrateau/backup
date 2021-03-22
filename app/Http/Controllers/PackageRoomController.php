@@ -37,9 +37,11 @@ class PackageRoomController extends Controller
     {
         try {
             $rules = [
-                'pr_id' => 'required',
+                'device_id' => 'required',
                 'package_id' => 'required',
                 'room_id' => 'required',
+                'max_qty' => 'required',
+                'min_qty' => 'required'
             ];
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
@@ -49,11 +51,11 @@ class PackageRoomController extends Controller
                     'data' => null,
                 ], 422);
             }
-            
+
              $package_room = new Package_room($request->all());
-    
+
              $package_room->save();
-            
+
             return response()->json(
             [
                 'error' => false,

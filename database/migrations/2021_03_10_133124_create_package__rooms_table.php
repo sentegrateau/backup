@@ -18,7 +18,8 @@ class CreatePackageRoomsTable extends Migration
             $table->bigInteger('package_id')->unsigned();
             $table->bigInteger('room_id')->unsigned();
             $table->bigInteger('device_id')->unsigned();
-            $table->integer('number_of_rooms');
+            $table->integer('max_qty');
+            $table->integer('min_qty');
             $table->timestamps();
 
             $table->foreign('package_id')

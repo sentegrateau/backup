@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Package_Room extends Model
 {
     use HasFactory;
-
-    protected $fillable = ['pr_id','package_id','room_id','number_of_rooms'];
+    protected $table = 'package__room__device';
+    protected $fillable = ['package_id', 'room_id','device_id','min_qty','max_qty'];
 }
