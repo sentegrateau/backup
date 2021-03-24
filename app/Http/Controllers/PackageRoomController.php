@@ -1,9 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Device;
+use App\Models\Room;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Package_Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class PackageRoomController extends Controller
 {
@@ -51,7 +55,20 @@ class PackageRoomController extends Controller
                     'data' => null,
                 ], 422);
             }
-
+            $record_exists = Package_Room::where(function ($query) use ($request) {
+                $query->where('package_id', $request['package_id'])
+                    ->where('room_id', $request['room_id'])
+                    ->where('device_id', $request['device_id']);
+            })->orWhere(function ($q) use ($request){
+                $q->where('room_id', $request['room_id'])->where('device_id', $request['device_id']);
+            })->exists();
+            if($record_exists){
+                return response()->json([
+                   'error' => true,
+                   'message' => 'Record Already Exists',
+                   'data' => null
+                ], 422);
+            }
              $package_room = new Package_room($request->all());
 
              $package_room->save();
@@ -115,5 +132,52 @@ class PackageRoomController extends Controller
     public function destroy(Package_Room $package_Room)
     {
         //
+    }
+
+    public function packageRooms($id){
+        try{
+          $roomIds = Package_Room::where('package_id', $id)->select('room_id')->get();
+          $flatten = collect(Arr::flatten($roomIds))->pluck('room_id');
+          $rooms = [];
+          foreach ($flatten as $key => $a){
+              $rooms[] = Room::where('id', $a)->get();
+          }
+          $reFlatten = Arr::flatten($rooms);
+          return response()->json([
+              'error' => false,
+              'message' => null,
+              'data' => $reFlatten
+          ]);
+
+        }catch(\Exception $e){
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 400);
+        }
+    }
+    public function roomDevices($id){
+        try{
+            $roomIds = Package_Room::where('room_id', $id)->select('device_id')->get();
+            $flatten = collect(Arr::flatten($roomIds))->pluck('device_id');
+            $rooms = [];
+            foreach ($flatten as $key => $a){
+                $rooms[] = Device::where('id', $a)->get();
+            }
+            $reFlatten = Arr::flatten($rooms);
+            return response()->json([
+                'error' => false,
+                'message' => null,
+                'data' => $reFlatten
+            ]);
+
+        }catch(\Exception $e){
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 400);
+        }
     }
 }
