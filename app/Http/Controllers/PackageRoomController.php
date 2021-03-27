@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 use App\Models\Device;
 use App\Models\Room;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Package_Room;
+use App\Models\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -18,7 +20,25 @@ class PackageRoomController extends Controller
      */
     public function index()
     {
-        //
+        try{
+            $allResult = DB::table('package__room__device')
+                ->leftJoin('packages', 'package__room__device.package_id', '=', 'packages.id')
+                ->leftJoin('rooms', 'package__room__device.room_id', '=', 'rooms.id')
+                ->leftJoin('devices', 'package__room__device.device_id', '=', 'devices.id')
+                ->select('package__room__device.*', 'packages.name as package_name', 'rooms.name as room_name', 'devices.name as device_name')->get();
+            return response()->json([
+                'error' => false,
+                'message' => 'Requested Data',
+                'data' => $allResult
+            ]);
+
+        }catch (\Exception $e){
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
+        }
     }
 
     /**
@@ -59,8 +79,6 @@ class PackageRoomController extends Controller
                 $query->where('package_id', $request['package_id'])
                     ->where('room_id', $request['room_id'])
                     ->where('device_id', $request['device_id']);
-            })->orWhere(function ($q) use ($request){
-                $q->where('room_id', $request['room_id'])->where('device_id', $request['device_id']);
             })->exists();
             if($record_exists){
                 return response()->json([
@@ -137,7 +155,7 @@ class PackageRoomController extends Controller
     public function packageRooms($id){
         try{
           $roomIds = Package_Room::where('package_id', $id)->select('room_id')->get();
-          $flatten = collect(Arr::flatten($roomIds))->pluck('room_id');
+          $flatten = collect(Arr::flatten($roomIds))->pluck('room_id')->unique();
           $rooms = [];
           foreach ($flatten as $key => $a){
               $rooms[] = Room::where('id', $a)->get();
@@ -160,7 +178,7 @@ class PackageRoomController extends Controller
     public function roomDevices($id){
         try{
             $roomIds = Package_Room::where('room_id', $id)->select('device_id')->get();
-            $flatten = collect(Arr::flatten($roomIds))->pluck('device_id');
+            $flatten = collect(Arr::flatten($roomIds))->pluck('device_id')->unique();
             $rooms = [];
             foreach ($flatten as $key => $a){
                 $rooms[] = Device::where('id', $a)->get();
