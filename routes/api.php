@@ -28,5 +28,7 @@ Route::resource("room", "App\Http\Controllers\RoomController");
 Route::resource("partner", "App\Http\Controllers\PartnerController");
 Route::resource("package_room", "App\Http\Controllers\PackageRoomController");
 Route::resource("device", "App\Http\Controllers\DeviceController");
+Route::resource('order', 'App\Http\Controllers\OrderController');
+Route::get('order-items/{id}', 'App\Http\Controllers\OrderController@getOrderItems');
 Route::get('package-rooms/{id}',"App\Http\Controllers\PackageRoomController@packageRooms");
 Route::get('room-devices/{id}',"App\Http\Controllers\PackageRoomController@roomDevices");
