@@ -32,4 +32,5 @@ Route::resource('order', 'App\Http\Controllers\OrderController');
 Route::get('order-items/{id}', 'App\Http\Controllers\OrderController@getOrderItems');
 Route::get('package-rooms/{id}',"App\Http\Controllers\PackageRoomController@packageRooms");
 Route::get('room-devices/{id}',"App\Http\Controllers\PackageRoomController@roomDevices");
+Route::get('minmax-qty','App\Http\Controllers\PackageRoomController@minMaxQty');
 Route::post('upload-image','App\Http\Controllers\ImageUploadController@store');

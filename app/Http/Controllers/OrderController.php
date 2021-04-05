@@ -11,10 +11,14 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends BaseController
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
-            $orders = Order::all();
+            $order = Order::query();
+            if($request->has('type')) {
+                $order->where('type', $request['type']);
+            }
+            $orders = $order->get();
             return $this->sendResponse($orders, 'Data');
         }catch (\Exception $e){
             return $this->exceptionHandler($e->getMessage(), $e->getCode());
@@ -25,6 +29,7 @@ class OrderController extends BaseController
         $rules = [
             'user_id' => 'required',
             'partner_id' => 'required',
+            'title' => 'required',
             'type' => 'required',
             'amount' => 'required',
             'order_items' => 'required'
@@ -39,7 +44,8 @@ class OrderController extends BaseController
                 'user_id' => $request['user_id'],
                 'partner_id' => $request['partner_id'],
                 'type' => $request['type'],
-                'amount' => $request['amount']
+                'amount' => $request['amount'],
+                'title' => $request['title']
             ]);
             if($request->has('order_items') && is_array($request->order_items) && count($request->order_items)){
                 foreach ($request->order_items as $order_item){
@@ -57,7 +63,7 @@ class OrderController extends BaseController
 
         }catch (\Exception $e){
             DB::rollBack();
-            return $this->exceptionHandler($e->getMessage(), $e->getCode());
+            return $this->exceptionHandler($e->getMessage(), 500);
         }
     }
 

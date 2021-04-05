@@ -15,7 +15,7 @@ class CreateDevicesTable extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('partner_id')->unsigned();
+            $table->unsignedBigInteger('partner_id');
             $table->string('name', 50);
             $table->string('description', 200);
             $table->string('brand', 50)->nullable();
@@ -26,7 +26,7 @@ class CreateDevicesTable extends Migration
             $table->enum('stock_status', ['0','1'])->default(0);
             $table->string('supplier', 50);
             $table->string('manual_url', 50)->nullable();
-            $table->string('image', 50)->nullable();
+            $table->text('image', 50)->nullable();
             $table->enum('status', ['0','1'])->default(1);
             $table->timestamps();
 

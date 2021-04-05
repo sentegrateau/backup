@@ -20,6 +20,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('partner_id');
             $table->foreign('partner_id')->on('partners')->references('id');
             $table->string('type');
+            $table->string('title');
             $table->integer('amount');
             $table->timestamps();
         });

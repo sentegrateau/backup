@@ -198,4 +198,27 @@ class PackageRoomController extends Controller
             ], 400);
         }
     }
+    public function minMaxQty(Request $request){
+        try{
+            if ($request->has('package') && $request->has('room') && $request->has('device')){
+                $result = Package_Room::where([
+                    ['package_id','=', $request['package']],
+                    ['room_id','=', $request['room']],
+                    ['device_id','=', $request['device']],
+                ])->select('min_qty','max_qty')->first();
+                return response()->json([
+                    'error' => false,
+                    'message' => null,
+                    'data' => $result
+                ]);
+            }
+
+        }catch(\Exception $e){
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'data' => null,
+            ], 400);
+        }
+    }
 }
