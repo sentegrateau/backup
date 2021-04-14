@@ -4,160 +4,84 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Package;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\BaseController as BaseController;
 
-class PackageController extends Controller
+class PackageController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
         try {
-            $packages = Package::all();
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => [],
-                    'data' => $packages,
-                ]
-                );
+            $packages = Package::orderBy('order','asc')->get();
+            return $this->sendResponse($packages, 'All Packages');
             } catch (\Exception $e) {
-                return response()->json([
-                    'error' => true,
-                    'message' => $e->getMessage(),
-                    'data' => null,
-                    ], 400);
+            return $this->exceptionHandler($e->getMessage(), 500);
             }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
+        try {
+            $rules = [
+                'name' => 'required',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return $this->sendError('Validation Error', $validator->errors());
+            }
+            DB::beginTransaction();
+            $package = new Package($request->all());
+            $package->save();
+            DB::commit();
+            return $this->sendResponse('', 'Package created successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->exceptionHandler($e->getMessage(), 500);
 
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-       // dd($request->all());
-       try {
-        $rules = [
-            'name' => 'required',
-        ];
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => true,
-                'message' => $validator->errors()->all(),
-                'data' => null,
-            ], 422);
         }
-
-         $package = new Package($request->all());
-
-         $package->save();
-
-        return response()->json(
-        [
-            'error' => false,
-            'message' => [$package->name . ' created successfully'],
-            'data' => null,
-        ]
-        );
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => true,
-            'message' => $e->getMessage(),
-            'data' => null,
-            ], 400);
-        }
-
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Package  $package
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show($id): \Illuminate\Http\JsonResponse
     {
-        // dd($request->all());
         try {
             $package = Package::where('id', $id)->firstOrFail();
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => [],
-                    'data' => $package,
-                ]
-                );
+            return $this->sendResponse($package, 'Requested Data');
             } catch (\Exception $e) {
-                return response()->json([
-                    'error' => true,
-                    'message' => $e->getMessage(),
-                    'data' => null,
-                    ], 400);
+                return $this->exceptionHandler($e->getMessage(), 500);
             }
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Package  $package
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Package $package)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Package  $package
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Package $package)
     {
         //
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Package  $package
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy($id): \Illuminate\Http\JsonResponse
     {
         try {
-            $package = Package::where('id', $id)->delete();
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => ["Deleted Successfully ! "],
-                    'data' => null,
-                ]
-                );
+             Package::where('id', $id)->delete();
+            return $this->sendResponse('','Deleted Successfully');
             } catch (\Exception $e) {
-                return response()->json([
-                    'error' => true,
-                    'message' => $e->getMessage(),
-                    'data' => null,
-                    ], 400);
+                return $this->exceptionHandler($e->getMessage(), 500);
             }
+    }
+    /***
+     *  To update the order of packages bulk
+     */
+    public function updateOrder(Request $request)
+    {
+        try{
+            if ($request->has('data')){
+                if( is_array($request->data) && count($request->data)){
+                    foreach ($request->data as $order){
+                        DB::beginTransaction();
+                        Package::where('id', $order['id'])->update(['order' => $order['order']]);
+                        DB::commit();
+                    }
+                    return $this->sendResponse('','Order Update Successfully');
+                }
+            }else{
+               return $this->sendError('Invalid Data','',422);
+            }
+        }catch (\Exception $e) {
+            DB::rollBack();
+            return $this->exceptionHandler($e->getMessage(), 500);
+        }
     }
 }

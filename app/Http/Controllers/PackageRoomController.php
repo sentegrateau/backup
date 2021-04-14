@@ -158,7 +158,26 @@ class PackageRoomController extends Controller
           $flatten = collect(Arr::flatten($roomIds))->pluck('room_id')->unique();
           $rooms = [];
           foreach ($flatten as $key => $a){
-              $rooms[] = Room::where('id', $a)->get();
+              $devices = [];
+              $room = Room::findOrFail($a);
+              $roomIds = Package_Room::where([
+                  ['package_id', $id],
+                  ['room_id', $a]
+              ])->select('device_id')->get();
+              $flatten1 = collect(Arr::flatten($roomIds))->pluck('device_id')->unique();
+              foreach ($flatten1 as $key => $b) {
+                  $min_max = Package_Room::where([
+                      ['package_id', $id],
+                      ['room_id', $a],
+                      ['device_id', $b]
+                  ])->select('min_qty','max_qty')->first();
+                  $device  = Device::where('id', $b)->first();
+                  $device->min_qty = $min_max['min_qty'];
+                  $device->max_qty = $min_max['max_qty'];
+                  $devices[] = $device;
+              }
+              $room['devices'] =$devices;
+              $rooms[] = $room;
           }
           $reFlatten = Arr::flatten($rooms);
           return response()->json([
