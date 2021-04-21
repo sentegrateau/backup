@@ -35,3 +35,4 @@ Route::get('room-devices/{id}',"App\Http\Controllers\PackageRoomController@roomD
 Route::get('minmax-qty','App\Http\Controllers\PackageRoomController@minMaxQty');
 Route::post('upload-image','App\Http\Controllers\ImageUploadController@store');
 Route::put('update-package-order', 'App\Http\Controllers\PackageController@updateOrder');
+Route::put('change-device-status/{id}', 'App\Http\Controllers\DeviceController@changeStatus');

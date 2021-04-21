@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Package_Room;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Device;
 use Illuminate\Http\Request;
@@ -31,8 +32,28 @@ class DeviceController extends BaseController
                 return $this->sendError('Validation Errors', $validator->errors(),422);
             }
             DB::beginTransaction();
-             $device = new Device($request->all());
-             $device->save();
+             $device = Device::create([
+                 'partner_id' => $request['partner_id'],
+                 'name' => $request['name'],
+                 'description' => $request['description'],
+                 'brand' => $request['brand'],
+                 'model' => $request['model'],
+                 'price' => $request['price'],
+                 'discount' => $request['discount'],
+                 'supplier' => $request['supplier'],
+                 'image' => $request['image']
+             ]);
+            if ($request->has('quantities') && is_array($request->quantities) && count($request->quantities)){
+                foreach ($request->quantities as $quantity){
+                    Package_Room::create([
+                        'package_id' => $quantity['package_id'],
+                        'room_id' => $quantity['room_id'],
+                        'device_id' => $device['id'],
+                        'min_qty' => $quantity['min_qty'],
+                        'max_qty' => $quantity['max_qty']
+                    ]);
+                }
+            }
              DB::commit();
             return $this->sendResponse($device, 'New Device Created Successfully');
         } catch (\Exception $e) {
@@ -82,5 +103,23 @@ class DeviceController extends BaseController
             } catch (\Exception $e) {
                 return $this->exceptionHandler($e->getMessage(), 500);
             }
+    }
+    // changing the state of the device
+    public function changeStatus(Request $request, $id): \Illuminate\Http\JsonResponse
+    {
+        try {
+            DB::beginTransaction();
+            $device = Device::findOrFail($id);
+            $update = $device->update(['status' => $request['status']]);
+            DB::commit();
+            if ($update){
+                return $this->sendResponse('','Status updated successfully');
+            }else{
+                return $this->sendError('', 'Problem in updating status', 400);
+            }
+        }catch (\Exception $e){
+            DB::rollBack();
+            return $this->exceptionHandler($e->getMessage(), 500);
+        }
     }
 }
