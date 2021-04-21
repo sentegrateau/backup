@@ -1,59 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Package;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\BaseController as BaseController;
 
-class RoomController extends Controller
+class RoomController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
         try {
-
-            // $rooms = Room::with("packages")->get();
             $rooms = Room::all();
-
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => [],
-                    'data' => $rooms
-                ]
-            );
+            return $this->sendResponse($rooms, 'All Rooms');
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => true,
-                'message' => $e->getMessage(),
-                'data' => null,
-            ], 400);
+            return $this->exceptionHandler($e->getMessage(),500);
         }
     }
-
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
             $rules = [
@@ -61,107 +26,58 @@ class RoomController extends Controller
             ];
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
-                return response()->json([
-                    'error' => true,
-                    'message' => $validator->errors()->all(),
-                    'data' => null,
-                ], 422);
+               return $this->sendError('Validation Errors',$validator->errors(), 422);
             }
-
+            Db::beginTransaction();
              $room = new Room($request->all());
-
              $room->save();
-
-            return response()->json(
-            [
-                'error' => false,
-                'message' => [$room->name . ' created successfully'],
-                'data' => null,
-            ]
-            );
+             DB::commit();
+            return $this->sendResponse($room, 'Room Created Successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => true,
-                'message' => $e->getMessage(),
-                'data' => null,
-                ], 400);
+            return $this->exceptionHandler($e->getMessage(), 500);
             }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show($id): \Illuminate\Http\JsonResponse
     {
-        //
         try {
-            $room = Room::where('id', $id)->firstOrFail();
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => [],
-                    'data' => $room,
-                ]
-                );
+            $room = Room::findOrFail($id);
+            return $this->sendResponse($room, 'Requested Room');
             } catch (\Exception $e) {
-                return response()->json([
-                    'error' => true,
-                    'message' => $e->getMessage(),
-                    'data' => null,
-                    ], 400);
+                return $this->exceptionHandler($e->getMessage(),500);
             }
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Room $room)
+    public function update(Request $request, Room $room): \Illuminate\Http\JsonResponse
     {
-        //
+        try {
+            if ($request->has('activation')){
+                DB::beginTransaction();
+                $update = $room->update(['status' => $request['activation']]);
+                DB::commit();
+                if ($update) {
+                    return $this->sendResponse('','Status updated Successfully');
+                }
+            }else {
+                DB::beginTransaction();
+                $update = $room->update($request->all());
+                DB::commit();
+                if ($update) {
+                    return $this->sendResponse('','Room updated successfully');
+                }
+            }
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+            return $this->exceptionHandler($e->getMessage(),500);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Room $room)
+    public function destroy($id): \Illuminate\Http\JsonResponse
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
         try {
             $room = Room::where('id', $id)->delete();
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => ["Deleted Successfully ! "],
-                    'data' => null,
-                ]
-                );
+            return $this->sendResponse('','Room deleted successfully');
             } catch (\Exception $e) {
-                return response()->json([
-                    'error' => true,
-                    'message' => $e->getMessage(),
-                    'data' => null,
-                    ], 400);
+                return $this->exceptionHandler($e->getMessage(),500);
             }
     }
 }

@@ -42,15 +42,34 @@ class PackageController extends BaseController
     public function show($id): \Illuminate\Http\JsonResponse
     {
         try {
-            $package = Package::where('id', $id)->firstOrFail();
+            $package = Package::FindOrFail($id);
             return $this->sendResponse($package, 'Requested Data');
             } catch (\Exception $e) {
                 return $this->exceptionHandler($e->getMessage(), 500);
             }
     }
-    public function update(Request $request, Package $package)
+    public function update(Request $request, Package $package): \Illuminate\Http\JsonResponse
     {
-        //
+        try {
+            if ($request->has('activation')) {
+                DB::beginTransaction();
+                $update = $package->update(['status' => $request['activation']]);
+                DB::commit();
+                if ($update) {
+                    return $this->sendResponse('','Status updated successfully');
+                }
+            }else{
+                DB::beginTransaction();
+                $update = $package->update($request->all());
+                DB::commit();
+                if ($update) {
+                    return $this->sendResponse('','Package updated successfully');
+                }
+            }
+        }catch (\Exception $e){
+            DB::rollBack();
+            return $this->exceptionHandler($e->getMessage(), 500);
+        }
     }
     public function destroy($id): \Illuminate\Http\JsonResponse
     {

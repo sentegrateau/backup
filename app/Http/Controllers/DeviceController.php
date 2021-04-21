@@ -4,53 +4,21 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Device;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\BaseController as BaseController;
 
-class DeviceController extends Controller
+class DeviceController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
         try {
-
             $devices = Device::all();
-
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => [],
-                    'data' => $devices
-                ]
-            );
+            return $this->sendResponse($devices, 'All Devices');
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => true,
-                'message' => $e->getMessage(),
-                'data' => null,
-            ], 400);
+            return $this->exceptionHandler($e->getMessage(), 500);
         }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
             $rules = [
@@ -60,90 +28,59 @@ class DeviceController extends Controller
             ];
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
-                return response()->json([
-                    'error' => true,
-                    'message' => $validator->errors()->all(),
-                    'data' => null,
-                ], 422);
+                return $this->sendError('Validation Errors', $validator->errors(),422);
             }
-            
+            DB::beginTransaction();
              $device = new Device($request->all());
-    
              $device->save();
-            
-            return response()->json(
-            [
-                'error' => false,
-                'message' => [$device->name . ' created successfully'],
-                'data' => null,
-            ]
-            );
+             DB::commit();
+            return $this->sendResponse($device, 'New Device Created Successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => true,
-                'message' => $e->getMessage(),
-                'data' => null,
-                ], 400);
+            DB::rollBack();
+            return $this->exceptionHandler($e->getMessage(),500);
+        }
+    }
+    public function show($id): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $device = Device::findOrFail($id);
+            return $this->sendResponse($device, 'Requested Device');
+        }catch (\Exception $e) {
+            return $this->sendResponse($e->getMessage(), 500);
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Device  $device
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Device $device)
+    public function update(Request $request, Device $device): \Illuminate\Http\JsonResponse
     {
-        //
-    }
+        try {
+            if ($request->has('activation')){
+                DB::beginTransaction();
+                $update = $device->update(['status' => $request['activation']]);
+                DB::commit();
+                if ($update) {
+                    return $this->sendResponse('', 'Status updated successfully');
+                }
+            }else{
+                DB::beginTransaction();
+                $update = $device->update($request->all());
+                DB::commit();
+                if ($update) {
+                    return $this->sendResponse('','Device updated successfully');
+                }
+            }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Device  $device
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Device $device)
-    {
-        //
+        }catch (\Exception $e){
+            DB::rollBack();
+            return $this->exceptionHandler($e->getMessage(), 500);
+        }
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Device  $device
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Device $device)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Device  $device
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy($id): \Illuminate\Http\JsonResponse
     {
         try {
             $device = Device::where('id', $id)->delete();
-            return response()->json(
-                [
-                    'error' => false,
-                    'message' => ["Deleted Successfully ! "],
-                    'data' => null,
-                ]
-                );
+            return $this->sendResponse('', 'Device deleted successfully');
             } catch (\Exception $e) {
-                return response()->json([
-                    'error' => true,
-                    'message' => $e->getMessage(),
-                    'data' => null,
-                    ], 400);
+                return $this->exceptionHandler($e->getMessage(), 500);
             }
     }
 }
