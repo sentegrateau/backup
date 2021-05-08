@@ -32,7 +32,7 @@ class CreateDevicesTable extends Migration
 
             $table->foreign('partner_id')
             ->references('id')
-            ->on('partners');
+            ->on('users');
         });
     }
 

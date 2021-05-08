@@ -24,7 +24,7 @@ class CreateRoomsTable extends Migration
 
             $table->foreign('partner_id')
             ->references('id')
-            ->on('partners');
+            ->on('users');
 
             /*$table->foreign('package_id')
             ->references('id')

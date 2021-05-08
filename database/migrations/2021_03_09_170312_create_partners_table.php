@@ -17,10 +17,10 @@ class CreatePartnersTable extends Migration
             $table->id();
             $table->string('name', 50);
             $table->string('email', 50);
-            $table->string('password', 10);
-            $table->string('phone', 50);
-            $table->string('company', 50);
-            $table->boolean('active')->default(1);
+            $table->string('password', 10)->nullable();
+            $table->string('phone', 50)->nullable();
+            $table->string('company', 50)->nullable();
+            $table->boolean('active')->default(1)->nullable();
             $table->timestamps();
         });
     }

@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
 class ImageUploadController extends BaseController
 {
-    public function store(Request $request){
+    public function store(Request $request): \Illuminate\Http\JsonResponse
+    {
         try {
             $request->validate([
                 "image" => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'

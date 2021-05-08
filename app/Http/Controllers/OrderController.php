@@ -18,6 +18,9 @@ class OrderController extends BaseController
             if($request->has('type')) {
                 $order->where('type', $request['type']);
             }
+			if($request->has('user_id')) {
+                $order->where('user_id', $request['user_id']);
+            }
             $orders = $order->get();
             return $this->sendResponse($orders, 'Data');
         }catch (\Exception $e){

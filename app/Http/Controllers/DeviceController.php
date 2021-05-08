@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 use App\Models\Package_Room;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Device;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\BaseController as BaseController;
+use Illuminate\Support\Str;
 
 class DeviceController extends BaseController
 {
@@ -64,7 +66,7 @@ class DeviceController extends BaseController
     public function show($id): \Illuminate\Http\JsonResponse
     {
         try {
-            $device = Device::findOrFail($id);
+            $device = Device::where('id', $id)->with('packagesRoomsDevices')->first();
             return $this->sendResponse($device, 'Requested Device');
         }catch (\Exception $e) {
             return $this->sendResponse($e->getMessage(), 500);
@@ -83,7 +85,27 @@ class DeviceController extends BaseController
                 }
             }else{
                 DB::beginTransaction();
-                $update = $device->update($request->all());
+                $update = $device->update([
+                    'name' => $request['name'],
+                    'description' => $request['description'],
+                    'brand' => $request['brand'],
+                    'model' => $request['model'],
+                    'price' => $request['price'],
+                    'discount' => $request['discount'],
+                    'supplier' => $request['supplier']
+                ]);
+                if ($request->has('packagesRoomsDevices')) {
+                    $device->packagesRoomsDevices()->delete();
+                    foreach ($request->packagesRoomsDevices as $packageRoomDevice){
+                        Package_Room::create([
+                            'package_id' => $packageRoomDevice['package_id'],
+                            'room_id' => $packageRoomDevice['room_id'],
+                            'device_id' => $device['id'],
+                            'min_qty' => $packageRoomDevice['min_qty'],
+                            'max_qty' => $packageRoomDevice['max_qty']
+                        ]);
+                    }
+                }
                 DB::commit();
                 if ($update) {
                     return $this->sendResponse('','Device updated successfully');
@@ -121,5 +143,51 @@ class DeviceController extends BaseController
             DB::rollBack();
             return $this->exceptionHandler($e->getMessage(), 500);
         }
+    }
+
+    /**
+     *  Change Device Image
+     */
+    public function changeImage(Request $request, $id): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $request->validate([
+                "image" => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            ]);
+            $getDevice = Device::findOrFail($id);
+            if ($getDevice) {
+              $imageUrl = $getDevice->image;
+              $getImagePath = $this->remove(env('APP_URL'), $imageUrl);
+              if (File::exists(public_path($getImagePath))) {
+                  File::delete(public_path($getImagePath));
+              }
+              $image = $request->file('image');
+              $teaser_image = time().'.'.$image->getClientOriginalExtension();
+              $destination_path = public_path('/images');
+              $image->move($destination_path, $teaser_image);
+              $update  = $getDevice->update([
+                  'image' => env('APP_URL').'/images/'.$teaser_image
+              ]);
+              if ($update) {
+                  return $this->sendResponse($update, 'Image Updated Successfully');
+              } else{
+                  return $this->sendError('Error in updating image', '', 621);
+              }
+            }
+
+        }catch (\Exception $e){
+            return $this->exceptionHandler($e->getMessage(), 500);
+        }
+    }
+    /**
+     * Remove Certain Data From String
+     */
+    private function remove($search, $subject, $caseSensitive = true)
+    {
+        $subject = $caseSensitive
+            ? str_replace($search, '', $subject)
+            : str_ireplace($search, '', $subject);
+
+        return $subject;
     }
 }

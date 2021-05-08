@@ -37,3 +37,5 @@ Route::post('upload-image','App\Http\Controllers\ImageUploadController@store');
 Route::put('update-package-order', 'App\Http\Controllers\PackageController@updateOrder');
 Route::put('change-device-status/{id}', 'App\Http\Controllers\DeviceController@changeStatus');
 Route::post('send-email', 'App\Http\Controllers\EmailController@index');
+Route::post('find-or-create-user', 'App\Http\Controllers\UserController@findOrCreateUser');
+Route::post('change-device-image/{id}', 'App\Http\Controllers\DeviceController@changeImage');

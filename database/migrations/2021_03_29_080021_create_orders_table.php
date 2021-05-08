@@ -18,7 +18,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->on('users')->references('id');
             $table->unsignedBigInteger('partner_id');
-            $table->foreign('partner_id')->on('partners')->references('id');
+            $table->foreign('partner_id')->on('users')->references('id');
             $table->string('type');
             $table->string('title');
             $table->integer('amount');
