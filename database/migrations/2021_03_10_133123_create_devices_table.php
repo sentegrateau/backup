@@ -29,7 +29,7 @@ class CreateDevicesTable extends Migration
             $table->text('image', 50)->nullable();
             $table->enum('status', ['0','1'])->default(1);
             $table->timestamps();
-
+            $table->softDeletes();
             $table->foreign('partner_id')
             ->references('id')
             ->on('users');

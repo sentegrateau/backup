@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
+
+
     protected $fillable = ['user_id', 'partner_id', 'type', 'title', 'amount'];
+    protected $dates = ['deleted_at'];
     public function items() {
         return $this->hasMany('App\Models\OrderItem','order_id');
     }

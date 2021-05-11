@@ -12,6 +12,8 @@ class Device extends Model
     protected $fillable = ['partner_id','name','description','brand',
     'model','active','price','image', 'discount', 'supplier', 'status'];
 
+    protected $dates = ['deleted_at'];
+
     public function packagesRoomsDevices(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany('App\Models\Package_Room','device_id','id');

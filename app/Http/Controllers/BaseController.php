@@ -4,7 +4,19 @@ namespace App\Http\Controllers;
 
 class BaseController extends Controller
 {
-    public function sendResponse($result,$message){
+    /**
+     * @license Apache 2.0
+     */
+
+    /**
+     * @OA\Info(
+     *     version="1.0.0",
+     *     title="Sentegrate API Documentation",
+     * )
+     */
+
+    public function sendResponse($result,$message): \Illuminate\Http\JsonResponse
+    {
         $response = [
             'success' => true,
             'data' => $result,
@@ -13,7 +25,8 @@ class BaseController extends Controller
         return response()->json($response, 200);
     }
 
-    public function sendError($error, $message = [], $code = 404){
+    public function sendError($error, $message = [], $code = 404): \Illuminate\Http\JsonResponse
+    {
         $response =[
             'success' => false,
             'message' => $error
@@ -25,7 +38,8 @@ class BaseController extends Controller
         return response()->json($response,$code);
     }
 
-    public function exceptionHandler($result, $code = 500){
+    public function exceptionHandler($result, $code = 500): \Illuminate\Http\JsonResponse
+    {
         $response = [
             'error'=> true,
             'message' => $result,

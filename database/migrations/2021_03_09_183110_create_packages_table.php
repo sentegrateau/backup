@@ -21,7 +21,7 @@ class CreatePackagesTable extends Migration
             $table->enum('status', ['0','1'])->default(1);
             $table->integer('order')->nullable();
             $table->timestamps();
-
+            $table->softDeletes();
             $table->foreign('partner_id')
             ->references('id')
             ->on('users');

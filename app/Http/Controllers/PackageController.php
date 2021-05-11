@@ -9,6 +9,23 @@ use App\Http\Controllers\BaseController as BaseController;
 
 class PackageController extends BaseController
 {
+    /**
+     * Add a new pet to the store
+     *
+     * @OA\Post(
+     *     path="/pet",
+     *     tags={"pet"},
+     *     operationId="addPet",
+     *     @OA\Response(
+     *         response=405,
+     *         description="Invalid input"
+     *     ),
+     *     security={
+     *         {"petstore_auth": {"write:pets", "read:pets"}}
+     *     },
+     *     requestBody={"$ref": "#/components/requestBodies/Pet"}
+     * )
+     */
     public function index(): \Illuminate\Http\JsonResponse
     {
         try {

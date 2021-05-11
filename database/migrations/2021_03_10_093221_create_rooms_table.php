@@ -21,7 +21,7 @@ class CreateRoomsTable extends Migration
             $table->string('description', 200)->nullable();
             $table->enum('status', ['0','1'])->default(1);
             $table->timestamps();
-
+            $table->softDeletes();
             $table->foreign('partner_id')
             ->references('id')
             ->on('users');
