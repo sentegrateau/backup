@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Database\Factories\PostFactory;
+use Illuminate\Support\Facades\DB;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -13,8 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory(10)->create();
-        \App\Models\Partner::factory(10)->create();
+       DB::table('users')->insert([
+           'name' => 'sentegrate',
+           'role' => 'partner'
+       ]);
 
     }
 }

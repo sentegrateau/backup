@@ -8,7 +8,6 @@ use App\Models\Device;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\BaseController as BaseController;
-use Illuminate\Support\Str;
 
 class DeviceController extends BaseController
 {
