@@ -21,8 +21,8 @@ class CreateDevicesTable extends Migration
             $table->string('brand', 50)->nullable();
             $table->string('model', 50)->nullable();
             $table->boolean('active')->nullable();
-            $table->string('price', 50)->default(0);
-            $table->bigInteger('discount');
+            $table->integer('price');
+            $table->Integer('discount')->default(0);
             $table->enum('stock_status', ['0','1'])->default(0);
             $table->string('supplier', 50);
             $table->string('manual_url', 50)->nullable();

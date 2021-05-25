@@ -22,6 +22,7 @@ Route::resource("package_room", "App\Http\Controllers\PackageRoomController");
 Route::resource("device", "App\Http\Controllers\DeviceController");
 Route::resource('order', 'App\Http\Controllers\OrderController');
 Route::resource('draft', 'App\Http\Controllers\DraftController');
+Route::post('save-quotation', 'App\Http\Controllers\DraftController@saveQuotation');
 Route::get('draft-items/{id}', 'App\Http\Controllers\DraftController@getDraftItems');
 
 Route::get('order-items/{id}', 'App\Http\Controllers\OrderController@getOrderItems');

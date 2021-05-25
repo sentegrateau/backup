@@ -2,13 +2,14 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Invoice</title>
+    <title>Quotation</title>
 
     <style>
         .invoice-box {
             max-width: 800px;
             margin: auto;
             padding: 30px;
+            border: 1px solid #eee;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
             font-size: 16px;
             line-height: 24px;
@@ -83,16 +84,16 @@
         }
 
         /** RTL **/
-        .rtl {
+        .invoice-box.rtl {
             direction: rtl;
             font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
         }
 
-        .rtl table {
+        .invoice-box.rtl table {
             text-align: right;
         }
 
-        .rtl table tr td:nth-child(2) {
+        .invoice-box.rtl table tr td:nth-child(2) {
             text-align: left;
         }
     </style>
@@ -106,11 +107,13 @@
                 <table>
                     <tr>
                         <td class="title">
-                            <img src="{{asset('logo/logo.png')}}" style="width: 100%; max-width: 300px" />
+                            <img src="{{asset('/logo/logo.png')}}" style="width: 100%; max-width: 300px" />
                         </td>
 
                         <td>
-                            Created: {{ \Carbon\Carbon::now()->format('d-m-y') }}
+                            Invoice #: {{$quotation->quotation_no}}<br />
+                            Created: {{ $quotation->created_at->format('m/d/y') }}<br />
+                            Due: {{$quotation->validity->format('m/d/y')}}
                         </td>
                     </tr>
                 </table>
@@ -122,9 +125,9 @@
                 <table>
                     <tr>
                         <td>
-                            Sentegrate<br />
-                            123 Main St Anytown,<br />
-                            USA
+                            Sparksuite, Inc.<br />
+                            12345 Sunny Road<br />
+                            Sunnyville, CA 12345
                         </td>
 
                         <td>
@@ -137,42 +140,43 @@
             </td>
         </tr>
 
-{{--        <tr class="heading">--}}
-{{--            <td>Payment Method</td>--}}
+        <tr class="heading">
+            <td>Payment Method</td>
 
-{{--            <td>Check #</td>--}}
-{{--        </tr>--}}
+            <td>Check #</td>
+        </tr>
 
-{{--        <tr class="details">--}}
-{{--            <td>Check</td>--}}
+        <tr class="details">
+            <td></td>
 
-{{--            <td>1000</td>--}}
-{{--        </tr>--}}
+            <td></td>
+        </tr>
 
         <tr class="heading">
             <td>Item</td>
-
+            <td>Quantity</td>
             <td>Price</td>
         </tr>
-        @foreach($data as $d)
+        @foreach($draft_items as $item)
         <tr class="item">
-            <td>{{$d['title']}} x {{$d['quantity']}}</td>
-
-            <td>${{$d['price']}}</td>
+            <td>{{$item['device']['title']}}</td>
+            <td>{{$item['quantity']}}</td>
+            <td>${{$item['quantity'] * $item['price']}}</td>
         </tr>
-         @if($loop->last)
+            @if($loop->last)
                 <tr class="last-item">
-                    <td>{{$d['title']}} x {{$d['quantity']}}</td>
-
-                    <td>${{$d['totalPrice']}}</td>
+                    <td>{{$item['device']['title']}}</td>
+                    <td>{{$item['quantity']}}</td>
+                    <td>${{$item['quantity'] * $item['price']}}</td>
                 </tr>
-         @endif
+            @endif
         @endforeach
         <tr class="total">
             <td></td>
 
-            <td>Total: ${{$total}}</td>
+            <td>Total: ${{$quotation->total_amount}}</td>
         </tr>
     </table>
 </div>
 </body>
+</html>
