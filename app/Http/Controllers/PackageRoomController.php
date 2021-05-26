@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Package_Room;
 use App\Models\Package;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
 class PackageRoomController extends Controller
@@ -18,7 +19,7 @@ class PackageRoomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): JsonResponse
     {
         try{
             $allResult = DB::table('package__room__device')
@@ -41,23 +42,7 @@ class PackageRoomController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         try {
             $rules = [
@@ -107,51 +92,6 @@ class PackageRoomController extends Controller
             }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Package_Room  $package_Room
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Package_Room $package_Room)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Package_Room  $package_Room
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Package_Room $package_Room)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Package_Room  $package_Room
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Package_Room $package_Room)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Package_Room  $package_Room
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Package_Room $package_Room)
-    {
-        //
-    }
-
     public function packageRooms($id){
         try{
           $roomIds = Package_Room::where('package_id', $id)->select('room_id')->get();
@@ -159,25 +99,29 @@ class PackageRoomController extends Controller
           $rooms = [];
           foreach ($flatten as $key => $a){
               $devices = [];
-              $room = Room::findOrFail($a);
-              $roomIds = Package_Room::where([
-                  ['package_id', $id],
-                  ['room_id', $a]
-              ])->select('device_id')->get();
-              $flatten1 = collect(Arr::flatten($roomIds))->pluck('device_id')->unique();
-              foreach ($flatten1 as $key => $b) {
-                  $min_max = Package_Room::where([
+              $room = Room::where('id', $a)->where('status', '1')->first();
+              if ($room) {
+                  $roomIds = Package_Room::where([
                       ['package_id', $id],
-                      ['room_id', $a],
-                      ['device_id', $b]
-                  ])->select('min_qty','max_qty')->first();
-                  $device  = Device::where('id', $b)->first();
-                  $device->min_qty = $min_max['min_qty'];
-                  $device->max_qty = $min_max['max_qty'];
-                  $devices[] = $device;
+                      ['room_id', $a]
+                  ])->select('device_id')->get();
+                  $flatten1 = collect(Arr::flatten($roomIds))->pluck('device_id')->unique();
+                  foreach ($flatten1 as $key => $b) {
+                      $min_max = Package_Room::where([
+                          ['package_id', $id],
+                          ['room_id', $a],
+                          ['device_id', $b]
+                      ])->select('min_qty','max_qty')->first();
+                      $device  = Device::where('id', $b)->where('status', '1')->first();
+                      if ($device) {
+                          $device->min_qty = $min_max['min_qty'];
+                          $device->max_qty = $min_max['max_qty'];
+                          $devices[] = $device;
+                      }
+                  }
+                  $room['devices'] =$devices;
+                  $rooms[] = $room;
               }
-              $room['devices'] =$devices;
-              $rooms[] = $room;
           }
           $reFlatten = Arr::flatten($rooms);
           return response()->json([

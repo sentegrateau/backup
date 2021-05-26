@@ -5,11 +5,12 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\BaseController as BaseController;
 
 class RoomController extends BaseController
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(): JsonResponse
     {
         try {
             $rooms = Room::all();
@@ -18,7 +19,7 @@ class RoomController extends BaseController
             return $this->exceptionHandler($e->getMessage(),500);
         }
     }
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
         try {
             $rules = [
@@ -37,7 +38,7 @@ class RoomController extends BaseController
             return $this->exceptionHandler($e->getMessage(), 500);
             }
     }
-    public function show($id): \Illuminate\Http\JsonResponse
+    public function show($id): JsonResponse
     {
         try {
             $room = Room::findOrFail($id);
@@ -46,7 +47,7 @@ class RoomController extends BaseController
                 return $this->exceptionHandler($e->getMessage(),500);
             }
     }
-    public function update(Request $request, Room $room): \Illuminate\Http\JsonResponse
+    public function update(Request $request, Room $room): JsonResponse
     {
         try {
             if ($request->has('activation')){
@@ -71,7 +72,7 @@ class RoomController extends BaseController
         }
     }
 
-    public function destroy($id): \Illuminate\Http\JsonResponse
+    public function destroy($id): JsonResponse
     {
         try {
             $room = Room::where('id', $id)->delete();

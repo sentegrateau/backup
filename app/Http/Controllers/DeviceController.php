@@ -7,11 +7,12 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Device;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\BaseController as BaseController;
 
 class DeviceController extends BaseController
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(): JsonResponse
     {
         try {
             $devices = Device::all();
@@ -20,7 +21,7 @@ class DeviceController extends BaseController
             return $this->exceptionHandler($e->getMessage(), 500);
         }
     }
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
         try {
             $rules = [
@@ -62,7 +63,7 @@ class DeviceController extends BaseController
             return $this->exceptionHandler($e->getMessage(),500);
         }
     }
-    public function show($id): \Illuminate\Http\JsonResponse
+    public function show($id): JsonResponse
     {
         try {
             $device = Device::where('id', $id)->with('packagesRoomsDevices')->first();
@@ -72,7 +73,7 @@ class DeviceController extends BaseController
         }
     }
 
-    public function update(Request $request, Device $device): \Illuminate\Http\JsonResponse
+    public function update(Request $request, Device $device): JsonResponse
     {
         try {
             if ($request->has('activation')){
@@ -183,10 +184,8 @@ class DeviceController extends BaseController
      */
     private function remove($search, $subject, $caseSensitive = true)
     {
-        $subject = $caseSensitive
+        return $caseSensitive
             ? str_replace($search, '', $subject)
             : str_ireplace($search, '', $subject);
-
-        return $subject;
     }
 }

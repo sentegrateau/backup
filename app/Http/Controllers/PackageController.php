@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\BaseController as BaseController;
 
 class PackageController extends BaseController
@@ -26,16 +27,20 @@ class PackageController extends BaseController
      *     requestBody={"$ref": "#/components/requestBodies/Pet"}
      * )
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $packages = Package::orderBy('order','asc')->get();
+            $package = Package::query();
+            if ($request->has('status')) {
+                $package->where('status', $request['status']);
+            }
+            $packages = $package->orderBy('order','asc')->get();
             return $this->sendResponse($packages, 'All Packages');
             } catch (\Exception $e) {
             return $this->exceptionHandler($e->getMessage(), 500);
             }
     }
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): JsonResponse
     {
         try {
             $rules = [
@@ -56,7 +61,7 @@ class PackageController extends BaseController
 
         }
     }
-    public function show($id): \Illuminate\Http\JsonResponse
+    public function show($id): JsonResponse
     {
         try {
             $package = Package::FindOrFail($id);
@@ -65,7 +70,7 @@ class PackageController extends BaseController
                 return $this->exceptionHandler($e->getMessage(), 500);
             }
     }
-    public function update(Request $request, Package $package): \Illuminate\Http\JsonResponse
+    public function update(Request $request, Package $package): JsonResponse
     {
         try {
             if ($request->has('activation')) {
@@ -88,7 +93,7 @@ class PackageController extends BaseController
             return $this->exceptionHandler($e->getMessage(), 500);
         }
     }
-    public function destroy($id): \Illuminate\Http\JsonResponse
+    public function destroy($id): JsonResponse
     {
         try {
              Package::where('id', $id)->delete();
@@ -100,7 +105,7 @@ class PackageController extends BaseController
     /***
      *  To update the order of packages bulk
      */
-    public function updateOrder(Request $request)
+    public function updateOrder(Request $request): JsonResponse
     {
         try{
             if ($request->has('data')){

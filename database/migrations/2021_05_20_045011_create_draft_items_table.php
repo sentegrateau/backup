@@ -25,6 +25,7 @@ class CreateDraftItemsTable extends Migration
             $table->foreign('device_id')->on('devices')->references('id');
             $table->integer('quantity');
             $table->integer('price')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -160,12 +160,22 @@ class DraftController extends BaseController
     /**
      * Remove the specified resource from storage.
      *
-     * @param Draft $draft
-     * @return Response
+     * @param $id
+     * @return JsonResponse
      */
-    public function destroy(Draft $draft)
+    public function destroy($id): JsonResponse
     {
-        //
+        try {
+            $draft = Draft::findOrFail($id);
+            if ($draft) {
+                $draft->delete();
+                return $this->sendResponse('','Deleted successfully');
+            }
+            return $this->sendError('Draft/Quotation not found', '', 404);
+        }catch (\Exception $e) {
+            return $this->exceptionHandler($e->getMessage(),500);
+        }
+
     }
 
     /**

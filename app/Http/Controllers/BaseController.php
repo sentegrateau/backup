@@ -12,7 +12,7 @@ class BaseController extends Controller
      * @OA\Info(
      *     version="1.0.0",
      *     title="Sentegrate API Documentation",
-     *  
+     *
      * )
      */
 
