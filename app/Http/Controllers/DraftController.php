@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use App\Http\Controllers\BaseController as BaseController;
 use Illuminate\Support\Str;
 
@@ -186,7 +187,10 @@ class DraftController extends BaseController
     {
         try {
             $orderItems = DraftItem::with('room','device','package')->where('draft_id', $id)->get();
-            return $this->sendResponse($orderItems, 'Requested Data');
+            $filtered = $orderItems->filter(function ($value, $key) {
+                return $value['package']['status'] == '1';
+            });
+            return $this->sendResponse($filtered->all(), 'Requested Data');
 
         }catch (\Exception $e){
             return $this->exceptionHandler($e->getMessage(), $e->getCode());
