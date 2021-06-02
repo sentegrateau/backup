@@ -35,3 +35,6 @@ Route::put('change-device-status/{id}', 'App\Http\Controllers\DeviceController@c
 Route::post('send-email', 'App\Http\Controllers\EmailController@index');
 Route::post('find-or-create-user', 'App\Http\Controllers\UserController@findOrCreateUser');
 Route::post('change-device-image/{id}', 'App\Http\Controllers\DeviceController@changeImage');
+
+//Payment Routes
+Route::post('charge', 'App\Http\Controllers\PaymentController@charge');
