@@ -44,7 +44,7 @@ class DraftController extends BaseController
                 $filtered_drafts = $all_drafts->filter(function ($value, $key) {
                     return Carbon::parse($value['validity'])->greaterThan(Carbon::now());
                 });
-                return $this->sendResponse($filtered_drafts->all()->toArray(), 'Filtered Drafts Data');
+                return $this->sendResponse($filtered_drafts->all(), 'Filtered Drafts Data');
             }
             return $this->sendResponse($all_drafts, 'Requested Data');
 
