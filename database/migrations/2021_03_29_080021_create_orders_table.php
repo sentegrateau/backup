@@ -22,7 +22,6 @@ class CreateOrdersTable extends Migration
             $table->string('type');
             $table->string('title');
             $table->integer('amount');
-            $table->integer('amount');
             $table->softDeletes();
             $table->timestamps();
         });
