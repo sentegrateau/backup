@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
+use Illuminate\Support\Facades\Validator;
 use Stripe;
 
 class OrderController extends BaseController
@@ -24,7 +25,42 @@ class OrderController extends BaseController
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
-            Stripe\Stripe::setApiKey($this->secret_key);
+            $rules = [
+                'order_data.user_id' => 'required',
+                'order_data.partner_id' => 'required',
+                'order_data.type' => 'required',
+                'order_data.amount' => 'required',
+                'shipping_information' => 'required',
+                'order_data.order_items' => 'array|required',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return $this->sendError('Validation Errors', $validator->errors(),422);
+            }
+            $order_items  = data_get($request,'order_data.order_items',null);
+            $shipping_info = json_encode(data_get($request,'shipping_information',null));
+            $order = Order::create([
+                'user_id' => $request->order_data['user_id'],
+                'partner_id' => $request->order_data['partner_id'],
+                'type' => $request->order_data['type'],
+                'amount' => $request->order_data['amount'],
+                'shipping_info' =>$shipping_info,
+
+            ]);
+
+            if (isset($order_items) && ($order_items != null)){
+                foreach ($order_items as $order_item){
+
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'package_id' => $order_item['package_id'],
+                        'room_id' => $order_item['room_id'],
+                        'device_id' => $order_item['device_id'],
+                        'quantity' => $order_item['quantity']
+                    ]);
+                }
+            }
+            Stripe\Stripe::setApiKey('sk_test_51IxTP1Gkj3mYwg4UvTOCAR1DgCyoquCGr1kcYiESUaUt78SdeQsLhkYaCvpI9lpWoz2IcosLPlv8U7TwdJW1BNfB00SFAYzcWu');
             $session  = Stripe\Checkout\Session::create([
                 'success_url' => 'http://localhost:4200/order-success',
                 'cancel_url' => 'http://localhost:4200/order-error',
