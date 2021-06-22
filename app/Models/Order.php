@@ -10,7 +10,7 @@ class Order extends Model
     use HasFactory;
 
 
-    protected $fillable = ['user_id', 'partner_id', 'type', 'title', 'amount','shipping_info'];
+    protected $fillable = ['user_id', 'partner_id', 'type', 'title', 'amount','shipping_info','stripe_order_id'];
     protected $dates = ['deleted_at'];
     public function items() {
         return $this->hasMany('App\Models\OrderItem','order_id');

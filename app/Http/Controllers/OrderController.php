@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrderStatusCode;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Stripe;
 
@@ -39,6 +41,7 @@ class OrderController extends BaseController
             }
             $order_items  = data_get($request,'order_data.order_items',null);
             $shipping_info = json_encode(data_get($request,'shipping_information',null));
+            DB::beginTransaction();
             $order = Order::create([
                 'user_id' => $request->order_data['user_id'],
                 'partner_id' => $request->order_data['partner_id'],
@@ -60,28 +63,32 @@ class OrderController extends BaseController
                     ]);
                 }
             }
+//            Stripe\Stripe::setApiKey($this->secret_key);
             Stripe\Stripe::setApiKey('sk_test_51IxTP1Gkj3mYwg4UvTOCAR1DgCyoquCGr1kcYiESUaUt78SdeQsLhkYaCvpI9lpWoz2IcosLPlv8U7TwdJW1BNfB00SFAYzcWu');
             $session  = Stripe\Checkout\Session::create([
                 'success_url' => 'http://localhost:4200/order-success',
                 'cancel_url' => 'http://localhost:4200/order-error',
-                'payment_method_types' => ['card', 'alipay'],
+                'payment_method_types' => ['card'],
                 'line_items' => [
                     [
                         'price_data' => [
                             'currency' => 'usd',
                             'product_data' => [
-                                'name' => 'T Shirt'
+                                'name' => 'Sentegrate Order'
                             ],
-                            'unit_amount' => 2000
+                            'unit_amount' => $order->amount
                         ],
                         'quantity' => 1
                     ]
                 ],
                 'mode' => 'payment'
             ]);
+
+            Order::where('id',$order->id)->update(['stripe_order_id' => $session->id]);
             return response()->json($session, 200);
 
         }catch (\Exception $e) {
+            DB::rollBack();
             return $this->exceptionHandler($e->getMessage(), 500);
         }
     }
@@ -115,6 +122,14 @@ class OrderController extends BaseController
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
+    public function stripe_webhook(Request $request)
+    {
+        if (isset($request) && $request != null){
+            if ($request->data['object']['payment_status'] && $request->data['object']['payment_status'] == 'paid' ){
+                Order::where('stripe_order_id',$request->data['object']['id'])->update(['order_status_code_id' =>OrderStatusCode::where('status_code', 'payment.recieved')->pluck('id')->first()]);
+            }
+        }
+    }
     public function destroy(Order $order)
     {
         //
