@@ -64,27 +64,29 @@ class OrderController extends BaseController
                 }
             }
 //            Stripe\Stripe::setApiKey($this->secret_key);
-            Stripe\Stripe::setApiKey('sk_test_51IxTP1Gkj3mYwg4UvTOCAR1DgCyoquCGr1kcYiESUaUt78SdeQsLhkYaCvpI9lpWoz2IcosLPlv8U7TwdJW1BNfB00SFAYzcWu');
-            $session  = Stripe\Checkout\Session::create([
-                'success_url' => 'http://localhost:4200/order-success',
-                'cancel_url' => 'http://localhost:4200/order-error',
-                'payment_method_types' => ['card'],
-                'line_items' => [
-                    [
-                        'price_data' => [
-                            'currency' => 'usd',
-                            'product_data' => [
-                                'name' => 'Sentegrate Order'
+            if (isset($order) && ($order != null)) {
+                Stripe\Stripe::setApiKey('sk_test_51IxTP1Gkj3mYwg4UvTOCAR1DgCyoquCGr1kcYiESUaUt78SdeQsLhkYaCvpI9lpWoz2IcosLPlv8U7TwdJW1BNfB00SFAYzcWu');
+                $session = Stripe\Checkout\Session::create([
+                    'success_url' => 'http://localhost:4200/order-success',
+                    'cancel_url' => 'http://localhost:4200/order-error',
+                    'payment_method_types' => ['card'],
+                    'line_items' => [
+                        [
+                            'price_data' => [
+                                'currency' => 'usd',
+                                'product_data' => [
+                                    'name' => 'Sentegrate Order'
+                                ],
+                                'unit_amount' => $order->amount
                             ],
-                            'unit_amount' => $order->amount
-                        ],
-                        'quantity' => 1
-                    ]
-                ],
-                'mode' => 'payment'
-            ]);
-
+                            'quantity' => 1
+                        ]
+                    ],
+                    'mode' => 'payment'
+                ]);
+            }
             Order::where('id',$order->id)->update(['stripe_order_id' => $session->id]);
+            DB::commit();
             return response()->json($session, 200);
 
         }catch (\Exception $e) {
