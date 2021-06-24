@@ -53,7 +53,6 @@ class OrderController extends BaseController
 
             if (isset($order_items) && ($order_items != null)){
                 foreach ($order_items as $order_item){
-
                     OrderItem::create([
                         'order_id' => $order->id,
                         'package_id' => $order_item['package_id'],
