@@ -15,6 +15,7 @@ class AddShippinginfoToOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->json('shipping_info')->nullable();
+            $table->json('billing_info')->nullable();
         });
     }
 
@@ -26,7 +27,8 @@ class AddShippinginfoToOrdersTable extends Migration
     public function down()
     {
         Schema::table('order', function (Blueprint $table) {
-            //
+            $table->dropColumn('shipping_info');
+            $table->dropColumn('billing_info');
         });
     }
 }

@@ -14,7 +14,7 @@ class AddStripeRequestandResponseToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->json('stripe_order_id')->nullable();
+            $table->text('stripe_order_id')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddStripeRequestandResponseToOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            //
+            $table->dropColumn('stripe_order_id');
         });
     }
 }
