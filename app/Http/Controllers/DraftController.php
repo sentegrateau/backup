@@ -249,7 +249,7 @@ class DraftController extends BaseController
             $draftItems = DraftItem::with('room','device','package')->where('draft_id', $quotation['id'])->get();
             $pdf = PDF::loadView("quotation", ["quotation" =>$quotation, "draft_items" => $draftItems]);
             Mail::send("quotation-email",["quotation" =>$quotation, "draft_items" => $draftItems], function($message) use ($pdf){
-                $message->to('muhammadahmad476@gmail.com')
+                $message->to(env('TEST_EMAIL'))
                     ->subject('Quotation')
                     ->attachData($pdf->output(),'quotation.pdf');
             });
