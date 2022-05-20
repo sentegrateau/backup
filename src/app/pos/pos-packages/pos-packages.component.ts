@@ -1,5 +1,6 @@
-import { Component, OnInit, Input ,Output, EventEmitter  } from '@angular/core';
-import { Items } from "../../model/item.model";
+import { Component, OnInit, Input , Output, EventEmitter  } from '@angular/core';
+import { Items } from '../../model/item.model';
+import {IPackage} from '../../model/package.interface';
 
 
 @Component({
@@ -9,20 +10,21 @@ import { Items } from "../../model/item.model";
 })
 export class PosPackagesComponent implements OnInit {
 
-  @Input() items : Items[] = []; 
+  @Input() items: IPackage[] = [];
   @Output() onClick = new EventEmitter();
 
-  constructor() { 
-      
+  constructor() {
+
   }
 
   ngOnInit(): void {
-   
+
   }
 
-  handleChange (event: any) : void  {
-    this.onClick.emit(event);
+  // handleChange(event: any): void  {
+  //   this.onClick.emit(event);
+  // }
+  handleClick(item: IPackage): void {
+    this.onClick.emit(item);
   }
-
-  
 }

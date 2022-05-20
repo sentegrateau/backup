@@ -1,0 +1,574 @@
+<div class="container">
+    <div class="py-1 text-center mb-2">
+        <div class="d-flex justify-content-between">
+
+            <h2></h2>
+        </div>
+    </div>
+
+    <div class='cardFlex'>
+        <button class="btn Temp" (click)="backToMain()">Back To Cart</button>
+        <div class="multistepsform">
+            <ul class="multi-step-form">
+
+                <li>Shopping Cart</li>
+                <li class="active">Shipping & Payment</li>
+                <li>Order Confirmation</li>
+            </ul>
+        </div>
+    </div>
+    <h4 class="heading-cart mt-3 mb-3 text-right">
+        <span>Shopping Cart</span>
+        <!-- <ng-container *ngIf="items.length > 0">
+          <span class="badge badge-secondary badge-pill">{{items.length}}</span>
+        </ng-container> -->
+    </h4>
+    <div class="row">
+        <div class="col-md-5 order-md-2 mb-4">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Package</th>
+                        <th class="text-right">Total including GST</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ng-container *ngIf="items.length > 0">
+                        <tr *ngFor="let item of cart">
+                            <td> {{item.package_title}}
+                                <span class="mr-0"></span>
+                            </td>
+                            <td class="text-right"> {{roundoff(item.total_amount + getGstAmt(item.total_amount)) |
+                                currency}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Total</td>
+                            <td
+                                    class="text-right">{{totalAmount | currency}}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Discount</td>
+                            <td class="text-right">(-{{DiscountOnCoupon | currency}})</td>
+                        </tr>
+                        <!-- <tr>
+                           <td>Total After Discount($)</td>
+                           <td
+                             class="text-right">{{(totalAmount - DiscountOnCoupon - ((ship_method == 'standard') ? settings.standard_ship_amt : settings.express_ship_amt))|  currency}}</td>
+                         </tr>-->
+
+                        <tr>
+                            <td>Shipping cost</td>
+                            <td class="text-right" *ngIf="ship_method=='standard'">{{settings.standard_ship_amt |
+                                currency}}
+                            </td>
+                            <td class="text-right" *ngIf="ship_method=='express'">{{settings.express_ship_amt |
+                                currency}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Total ($)</td>
+                            <td class="text-right">{{ roundoff(totalAmountDisShipping) | currency}}</td>
+                        </tr>
+
+
+                        <tr>
+                            <td>
+                                <strong>
+                                    Payment due now ({{pay_due_now}}%)
+                                </strong>
+                            </td>
+                            <td class="text-right">
+                                <strong>{{roundoff(((totalAmountDisShipping) * pay_due_now) / 100) | currency}}</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>GST Included</td>
+                            <td
+                                    class="text-right">{{roundoff((((((totalAmountDisShipping) * pay_due_now) / 100) /
+                                11))
+                                ) | currency}}
+                            </td>
+                        </tr>
+
+
+                        <!-- <tr>
+                          <td>Payment due on Installation ({{pay_on_installation}}%)</td>
+                          <td class="text-right">
+                            <strong>{{(((totalAmount) * pay_on_installation) / 100).toFixed(2) | currency}}</strong>
+                          </td>
+                        </tr> -->
+                    </ng-container>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-responsive payment-method-type">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th colspan="2">Shipping Method</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+
+                    <span class="pament-checkbox">
+                      <input type="radio" id="test1" name="ship_method" [(ngModel)]="ship_method"
+                             (ngModelChange)="shipMethod()" value="standard">
+                      <label for="test1">{{settings.ship_standard_text}}</label>
+                    </span>
+                        </td>
+                        <td>{{settings.standard_ship_amt |currency}}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                    <span class="pament-checkbox">
+                      <input type="radio" id="test2" name="ship_method" [(ngModel)]="ship_method"
+                             (ngModelChange)="shipMethod()" value="express">
+                      <label for="test2"> {{settings.ship_express_text}}</label>
+                    </span>
+                        </td>
+                        <td>{{settings.express_ship_amt |currency}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="table-responsive payment-method-type">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Payment Method</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr>
+                        <td>
+
+                     <span class="pament-checkbox">
+                       <input type="radio" id="test3" name="payment_methods" value="bank_transfer"
+                              [(ngModel)]="paymentMethod" (ngModelChange)="paymentMethods()">
+                       <label for="test3">  Bank transfer </label>
+
+                         <ul class="account-details">
+                            <li><span>Bank Name: Bankwest</span></li>
+                            <li><span>Account Name: Sentegrate Pty Ltd</span></li>
+                            <li><span> BSB: 302-162</span></li>
+                            <li><span>Account Number: 1127788</span></li>
+                         </ul>
+
+                     </span>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                    <span class="pament-checkbox">
+                      <input   type="radio" id="test4" name="radio-group" name="payment_methods" value="paypal"
+                             [(ngModel)]="paymentMethod" (ngModelChange)="paymentMethods()" >
+                      <label for="test4">Paypal or Credit Card payment online  </label>
+                    </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                    <span class="terms-checkbox">
+                        <label for="accept_terms"> <input type="checkbox" id="accept_terms" name="accept_terms" [(ngModel)]="isAcceptTerms"> I accept <a href="javascript:void(0);" (click)="termsConditions()">terms and conditions</a> of the sale.</label>
+                    </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-right">
+                <button #checkoutBtn class="btn btn-checkout btn-fixed-mob" type="submit" (click)="checkout()">Finalise
+                    Order
+                </button>
+                  <div *ngIf='paymentMethod=="paypal"'  class="test" style="text-align:center;margin-bottom: 10px;font-size: 16px;"> <strong>You Are Paying : </strong>{{roundoff(((totalAmountDisShipping) * pay_due_now) / 100) | currency}}</div>    
+
+                <div #paypal>                   
+                </div>                      
+                
+            </div>
+            <span *ngIf='errorAddress!=""' style="color: red;">**{{errorAddress}}</span>
+        </div>
+        <div class="col-md-7 order-md-1">
+            <div class="headebar-profile">
+                <span>Your profile</span>
+            </div>
+
+            <div *ngIf="showProfileDetails==1">
+                <a class="edit-address" (click)="editProfile()"><i class="fa fa-edit icons-back"></i>Contact Details
+                    <span class="span-imp">*</span></a>
+                <span> Name: {{getUserData.name}}</span><br>
+                <span> Contact: {{getUserData.contact}}</span><br>
+                <span> Email: {{getUserData.email}}</span><br>
+                <span> Company: {{getUserData.company}}</span><br>
+                <span> ABN: {{getUserData.abn}}</span>
+            </div>
+
+            <form *ngIf="showProfileDetails==0" class="needs-validation" [formGroup]="checkoutForm">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label>Name</label>
+                        <input type="text" class="form-control" formControlName="name" readonly>
+                        <small class="form-text text-danger" *ngIf="submitted && f.name.errors">
+                            <span *ngIf="f.name.errors.required">Name is required.</span>
+                        </small>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>Contact <span class="span-imp">*</span></label>
+                        <input type="text" class="form-control" formControlName="contact">
+                        <small class="form-text text-danger" *ngIf="submitted && f.contact.errors">
+                            <span *ngIf="f.contact.errors.required">Contact is required.</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label>Company</label>
+                        <input type="text" class="form-control" formControlName="company" readonly>
+                        <small class="form-text text-danger" *ngIf="submitted && f.company.errors">
+                            <span *ngIf="f.company.errors.required">Company is required.</span>
+                        </small>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>ABN</label>
+                        <input type="text" class="form-control" formControlName="abn" readonly>
+                        <small class="form-text text-danger" *ngIf="submitted && f.abn.errors">
+                            <span *ngIf="f.abn.errors.required">ABN is required.</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label>Set/Update Password 
+                         <i  title="{{getUserData.settings.pass_tooltip}}" class="fa fa-info-circle" aria-hidden="true" style="font-size: 18px;color: #f38022;"></i>
+                        </label>
+                        <div class="password-hide-show">
+                            <input class="form-control" formControlName="password" placeholder="******" name="password"
+                                   [type]="showPassword ? 'text' : 'password'"
+                                   id="password-field" placeholder="******">
+                            <span class="pass-icons">
+                                <i alt="show" class="far fa-eye-slash eye-hide"
+                                   (click)="showPassword = !showPassword"
+                                   [class.hide]="showPassword"></i>
+                                <i alt="hide" class="far fa-eye eye-show"
+                                   (click)="showPassword = !showPassword"
+                                   [class.hide]="!showPassword"></i>
+                            </span>
+                        </div>
+                        <small class="form-text text-danger" *ngIf="submitted && f.password.errors">
+                            <span *ngIf="f.password.errors.required">Password is required.</span>
+                            <span *ngIf="f.password.errors.pattern"> Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters.</span>
+                        </small>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label >Confirm Password</label>
+                        <div class="password-hide-show">
+                            <input type="text" class="form-control" formControlName="confirm_password"
+                                   placeholder="******" name="password"
+                                   [type]="conshowPassword ? 'text' : 'password'"
+                                   id="confirm-password-field" placeholder="******">
+                            <span class="pass-icons">
+                                <i alt="show" class="far fa-eye-slash eye-hide"
+                                   (click)="conshowPassword = !conshowPassword"
+                                   [class.hide]="conshowPassword"></i>
+
+                                <i alt="hide" class="far fa-eye eye-show"
+                                   (click)="conshowPassword = !conshowPassword"
+                                   [class.hide]="!conshowPassword"></i>
+                            </span>
+                        </div>
+                        <small class="form-text text-danger" *ngIf="submitted && f.confirm_password.errors">
+                            <span *ngIf="f.confirm_password.errors.confirmedValidator">Password and Confirm Password must be match.</span>
+                            <span *ngIf="f.confirm_password.errors.pattern"> Password and Confirm Password must be match</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="row justify-content-end">
+                    <button class="btn btn-checkout mr-3 mt-2" type="submit" (click)="updateProfile()">Update</button>
+                </div>
+            </form>
+            <hr class="mb-4">
+            <div *ngIf='showShippingDetails==1'>
+                <h4 class="heading-cart ">Shipping Address</h4>
+                <form class="needs-validation" [formGroup]="checkoutForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="firstName">First name <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="firstName" formControlName="firstName">
+                            <small class="form-text text-danger" *ngIf="submitted && f.firstName.errors">
+                                <span *ngIf="f.firstName.errors.required">First Name is required.</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="lastName">Last name <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="lastName" formControlName="lastName">
+                            <small class="form-text text-danger" *ngIf="submitted && f.lastName.errors">
+                                <span *ngIf="f.lastName.errors.required">Last Name is required.</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!--<div class="mb-2 col-md-6">
+                          <label for="email">Email</label>
+                          <input type="email" class="form-control" id="email" placeholder="you@example.com" formControlName="email">
+                          <small class="form-text text-danger" *ngIf="submitted && f.email.errors">
+                            <span *ngIf="f.email.errors.required">Email is required.</span>
+                          </small>
+                        </div>-->
+                        <div class="mb-2 col-md-6">
+                            <label for="phone">Phone <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="phone" formControlName="phone"
+                              onkeypress="return event.charCode >= 48 && event.charCode <= 57" >
+                            <small class="form-text text-danger" *ngIf="submitted && f.phone.errors">
+                                <span *ngIf="f.phone.errors.required">Phone is required.</span>
+                            </small>
+                        </div>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="address">Address <span class="span-imp">*</span></label>
+                        <input type="text" class="form-control" id="address" placeholder="1234 Main St"
+                               formControlName="address">
+                        <small class="form-text text-danger" *ngIf="submitted && f.address.errors">
+                            <span *ngIf="f.address.errors.required">Please enter your shipping address.</span>
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+                        <input type="text" class="form-control" id="address2" placeholder="Apartment or suite"
+                               formControlName="address2">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="country">Country <span class="span-imp">*</span></label>
+                            <ng-select
+                                    id="country"
+                                    formControlName="country"
+                                    [items]="countries"
+                                    (change)="changeShipCountry()"
+                                    [(ngModel)]='shipping_country'
+                                    bindValue="name"
+                                    bindLabel="name"
+                                    placeholder="Select Country"
+                            ></ng-select>
+                            <!--            <input type="text" class="form-control" id="country" formControlName="country">-->
+                            <small class="form-text text-danger" *ngIf="submitted && f.country.errors">
+                                <span *ngIf="f.country.errors.required">Country Name is required.</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-2" *ngIf='isCountryAusShip==false'>
+                            <label for="state">State <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" #shipstateinput id="state" formControlName="state">
+                            <small class="form-text text-danger" *ngIf="submitted && f.state.errors">
+                                <span *ngIf="f.state.errors.required">State is required.</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-2" *ngIf='isCountryAusShip==true'>
+                            <label for="stateB">State <span class="span-imp">*</span></label>
+                            <ng-select
+                                    id="stateB"
+                                    formControlName="state"
+                                    [items]="states"
+                                    #shipstateselect
+                                    bindValue="code"
+                                    bindLabel="name"
+                                    placeholder="Select State">
+                            </ng-select>
+                            <small class="form-text text-danger" *ngIf="submitted && !sameAdd && g.state.errors">
+                                <span *ngIf="g.state.errors.required">State Name is required.</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="city">City <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="city" formControlName="city">
+                            <small class="form-text text-danger" *ngIf="submitted && f.city.errors">
+                                <span *ngIf="f.city.errors.required">City is required.</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="zip">Postal Code <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" #shipzip id="zip" formControlName="zip"
+                                   (change)="changeZipShip(shipzip.value)">
+                            <small class="form-text text-danger" *ngIf="submitted && f.zip.errors">
+                                <span *ngIf="f.zip.errors.required">Postal code is required.</span>
+                            </small>
+                        </div>
+                    </div>
+                </form>
+
+
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="same-address" [checked]="sameAdd"
+                           (change)="checkSameAddress()">
+                    <label class="custom-control-label" for="same-address">Shipping address is the same as my billing
+                        address</label>
+                </div>
+            </div>
+
+
+            <div *ngIf='showShippingDetails==0' (click)="AddShippingAddress()" style="color: #13C2FB;cursor: pointer;">
+                <i class="fa fa-plus icons-back">Add Shipping Address</i>
+            </div>
+            <div *ngIf='showShippingDetails==2'>
+                <a class="edit-address" (click)="AddShippingAddress()"><i class="fa fa-edit icons-back"></i>Shipping and
+                    Billing Address <span class="span-imp">*</span></a>
+                <!-- <span style="color: blue;">  </span> -->
+                <h5 style="font-size: 15px;padding-top: 5px;font-weight: bold;">Shipping Address</h5>
+                <span> {{shipping_first_name}} </span>
+                <span> {{shipping_last_name}}</span>,<br>
+                <!--<span> {{shipping_email}} </span><br>-->
+                <span> {{shipping_address}}</span>,<br>
+                <div *ngIf='shipping_address_2'>
+                    <span> {{shipping_address_2}}</span>,<br>
+                </div>
+                <span> {{shipping_city}}</span>,<br>
+                <span> {{shipping_state}} {{shipping_zip}}, {{shipping_country}}</span>
+                <br/>
+
+            </div>
+            <div *ngIf="showShippingDetails==2">
+                <h5 style="font-size: 15px;font-weight: bold;padding-top: 5px;">Billing Address</h5>
+                <span> {{billing_first_name}} </span>
+                <span> {{billing_last_name}} </span>,<br>
+                <!--<span> {{billing_email}} </span><br>-->
+                <span> {{billing_address}}</span>,<br>
+                <div *ngIf='billing_address_2'>
+                    <span> {{billing_address_2}} </span>,<br>
+                </div>
+                <span> {{billing_city}} </span>,<br>
+                <span> {{billing_state}} {{billing_zip}}, {{billing_country}} </span>
+            </div>
+            <ng-container *ngIf="!sameAdd && showShippingDetails==1">
+                <h4 class="heading-cart mb-2 mt-3">Billing Address</h4>
+                <form class="needs-validation" [formGroup]="billingAddressForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="firstNameB">First name <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="firstNameB" formControlName="firstName">
+                            <small class="form-text text-danger"
+                                   *ngIf="submitted && !sameAdd && g.firstName.errors">
+                                <span *ngIf="g.firstName.errors.required">First Name is required.</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="lastNameB">Last name <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="lastNameB" formControlName="lastName">
+                            <small class="form-text text-danger"
+                                   *ngIf="submitted && !sameAdd && g.lastName.errors">
+                                <span *ngIf="g.lastName.errors.required">Last Name is required.</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!--<div class="mb-2 col-md-6">
+                          <label for="emailB">Email</label>
+                          <input type="email" class="form-control" id="emailB" placeholder="you@example.com"
+                                 formControlName="email">
+                          <small class="form-text text-danger" *ngIf="submitted && !sameAddress && g.email.errors">
+                            <span *ngIf="g.email.errors.required">Email is required.</span>
+                          </small>
+                        </div>-->
+                        <div class="mb-2 col-md-6">
+                            <label for="phoneB">Phone <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="phoneB" formControlName="phone"
+                            onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            <small class="form-text text-danger" *ngIf="submitted && !sameAdd && g.phone.errors">
+                                <span *ngIf="g.phone.errors.required">Phone is required.</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label for="addressB">Address <span class="span-imp">*</span></label>
+                        <input type="text" class="form-control" id="addressB" placeholder="1234 Main St"
+                               formControlName="address">
+                        <small class="form-text text-danger" *ngIf="submitted && !sameAdd && g.address.errors">
+                            <span *ngIf="g.address.errors.required">Please enter your Billing address.</span>
+                        </small>
+                    </div>
+                    <div class="mb-2">
+                        <label for="address2B">Address 2 <span class="text-muted">(Optional)</span></label>
+                        <input type="text" class="form-control" id="address2B" placeholder="Apartment or suite"
+                               formControlName="address2">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="countryB">Country <span class="span-imp">*</span></label>
+                            <ng-select
+                                    id="countryB"
+                                    formControlName="country"
+                                    [items]="countries"
+                                    (change)="changeBillCountry()"
+                                    [(ngModel)]='billing_country'
+                                    bindValue="name"
+                                    bindLabel="name"
+                                    placeholder="Select Country">
+                            </ng-select>
+                            <!--<input type="text" class="form-control" id="country" formControlName="country">-->
+                            <small class="form-text text-danger" *ngIf="submitted && !sameAdd && g.country.errors">
+                                <span *ngIf="g.country.errors.required">Country Name is required.</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-2" *ngIf='isCountryAusBill==false'>
+                            <label for="stateB">State <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="stateB" formControlName="state">
+                            <small class="form-text text-danger" *ngIf="submitted && !sameAdd && g.state.errors">
+                                <span *ngIf="g.state.errors.required">State is required.</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-2" *ngIf='isCountryAusBill==true'>
+                            <label for="stateB">State <span class="span-imp">*</span></label>
+                            <ng-select
+                                    id="stateB"
+                                    formControlName="state"
+                                    [items]="states"
+                                    bindValue="name"
+                                    bindLabel="name"
+                                    placeholder="Select State">
+                            </ng-select>
+                            <small class="form-text text-danger" *ngIf="submitted && !sameAdd && g.state.errors">
+                                <span *ngIf="g.state.errors.required">State Name is required.</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="cityB">City <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" id="cityB" formControlName="city">
+                            <small class="form-text text-danger" *ngIf="submitted && !sameAdd && g.city.errors">
+                                <span *ngIf="g.city.errors.required">City is required.</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="zipB">Postal Code <span class="span-imp">*</span></label>
+                            <input type="text" class="form-control" #billzip id="zipB" formControlName="zip"
+                                   (change)="changeZipBill(billzip.value)">
+                            <small class="form-text text-danger" *ngIf="submitted && !sameAdd && g.zip.errors">
+                                <span *ngIf="g.zip.errors.required">Postal code is required.</span>
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </ng-container>
+
+            <div *ngIf='showShippingDetails==1' class="row justify-content-end">
+                <button class="btn btn-checkout mr-3 mt-2" type="submit" (click)="updateShipping()">Update</button>
+            </div>
+            <!--<div class="action-btn text-center mt-4">
+              <button class="btn btn-checkout">Save</button>
+            </div>-->
+        </div>
+    </div>
+</div>

@@ -1,6 +1,7 @@
-import { Component, OnInit,  Input ,Output, EventEmitter} from '@angular/core';
-import { Items  } from "../../model/item.model";
-import { PosService } from '../pos.service';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {Items} from '../../model/item.model';
+import {PosService} from '../pos.service';
+import {IDevice} from '../../model/device.interface';
 
 @Component({
   selector: 'app-devices',
@@ -8,23 +9,22 @@ import { PosService } from '../pos.service';
   styleUrls: ['./devices.component.scss']
 })
 export class DevicesComponent implements OnInit {
- 
 
-  @Input() items : Items[] = []; 
+
+  @Input() items: IDevice[] = [];
   @Output() onClick = new EventEmitter();
 
-  constructor() { 
-      
+  constructor() {
+
   }
 
   ngOnInit(): void {
-    //this.get('device', 7)
+    // this.get('device', 7)
   }
 
-  handleChange (event: any) : void  {
+  handleClick(event: IDevice): void {
     this.onClick.emit(event);
   }
 
-  
 
 }

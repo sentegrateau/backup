@@ -1,3 +1,12 @@
-<app-items [items]="items" (onClick)="handleChange($event)">
-    
-</app-items>
+<!--<app-items [items]="items" (onClick)="handleChange($event)">-->
+<!--    -->
+<!--</app-items>-->
+<ul class="pos-ul">
+  <li *ngFor="let item of items" id="{{item.id}}" [class]="item.active ? 'selected' : '' " (click)="handleClick(item)" style="cursor: pointer">
+<!--    <ng-container *ngIf="item.imgUrl" >-->
+<!--      <img [src]="item.imgUrl" width="50">-->
+<!--    </ng-container>-->
+
+    {{item.name}}
+  </li>
+</ul>

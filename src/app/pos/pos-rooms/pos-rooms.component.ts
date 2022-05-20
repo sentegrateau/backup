@@ -1,6 +1,7 @@
-import { Component, OnInit , Input ,Output, EventEmitter } from '@angular/core';
-import { Items } from "../../model/item.model";
-import { PosService } from "../../pos/pos.service";
+import { Component, OnInit , Input , Output, EventEmitter } from '@angular/core';
+import { Items } from '../../model/item.model';
+import { PosService } from '../../pos/pos.service';
+import {IRoom} from '../../model/room.interface';
 @Component({
   selector: 'app-pos-rooms',
   templateUrl: './pos-rooms.component.html',
@@ -8,20 +9,23 @@ import { PosService } from "../../pos/pos.service";
 })
 export class PosRoomsComponent implements OnInit {
 
-  @Input() items : Items[] = []; 
+  @Input() items: IRoom[] = [];
   @Output() onClick = new EventEmitter();
 
-  constructor() { 
-      
+  constructor() {
+
   }
   ngOnInit(): void {
-    
+
   }
 
 
-  handleChange (event: any) : void  {
+  // handleChange(event: any): void  {
+  //   this.onClick.emit(event);
+  // }
+  handleClick(event: IRoom): void {
     this.onClick.emit(event);
   }
 
-  
+
 }

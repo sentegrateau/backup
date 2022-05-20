@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group row">
-                    <input type="text" placeholder="Type a name to save selection" class="form-control" disabled style="background-color: #fff">
+                    <input type="text" placeholder="Type a name to save selection" class="form-control"  style="background-color: #fff" >
                 </div>
             </div>
             <div class="col-md-1">
@@ -14,11 +14,11 @@
             </div>
 
             <div class="col-md-7 no-padding">
-                <button class="btn btn-footer btn-warning btn-lg">Reset Selection</button>
-                <button class="btn btn-footer btn-warning btn-lg">Email this Quote</button>
-                <button class="btn btn-footer btn-warning btn-lg">Order</button>
+                <button class="btn btn-footer btn-warning" (click)="handleChange($event)">Reset Selection</button>
+                <button class="btn btn-footer btn-warning">Email this Quote</button>
+                <button class="btn btn-footer btn-warning" (click)="placeOrder($event)">Order</button>
             </div>
-            
-        </div>    
+
+        </div>
     </div>
 </div>

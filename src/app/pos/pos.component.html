@@ -1,78 +1,254 @@
-<div class="row" style="text-align: center;">
-    <div class="col-md-12">
-        <h2>Order Sentegrate Smart Home Kit</h2>
-    </div>
+<div class="heading-smart-home">
+    <h2>Order Sentegrate Smart Home Kit</h2>
 </div>
-<br>
-<form>
-    
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Select A Standard or Saved Package: </label>
-        <div class="col-sm-4">
-        <input type="text" class="form-control">
+
+<div class="container-fluid">
+    <div class="select-kit">
+        <label class="dropdown-package-header">
+            Select a Standard or Saved Kit:
+        </label>
+        <select [value]="singleDraft.id" class="form-control"
+                (change)="onChangeOption($event.target)"
+                #selectQuote>
+            <option [selected]="defaultSelection" disabled>Select Standard or Saved Kit</option>
+            <ng-container *ngIf="filterDrafts('draft', 'admin').length > 0">
+                <option *ngFor="let standard of filterDrafts('draft','admin')" [value]="standard.id"
+                        [selected]="standard.selected">{{standard.title}}
+                </option>
+            </ng-container>
+            <ng-container *ngIf="filterDrafts('draft', 'user').length > 0">
+                <option [value]="null" disabled>---------- Saved Kit-----------</option>
+                <option *ngFor="let standard of filterDrafts('draft','user')" [value]="standard.id"
+                        [selected]="standard.selected">{{standard.title}}
+                </option>
+            </ng-container>
+            <ng-container *ngIf="filterDrafts('quotation', 'user').length > 0">
+                <option [value]="null" disabled>---------- Quotation-----------</option>
+                <option *ngFor="let standard of filterDrafts('quotation','user')" (click)="saveQuoteId(standard.id)"
+                        [value]="standard.id"
+                        [selected]="standard.selected">{{standard.quot_name}}
+                </option>
+            </ng-container>
+        </select>
+        <div class="col-2" *ngIf="!isDraftQuotationEmpty() && isDraftQuotationBelongsToUser()">
+            <button class="btn btn-warning btn-1" (click)="deleteDraftQuotation(singleDraft.id)">Delete</button>
         </div>
     </div>
-</form>
-<br>
 
-<ng-container >
-   <app-pos-header></app-pos-header>
-</ng-container>
 
-<div class="row text-center" > 
-    <div class="col-md-2 ptcontainer pos-column">
-        <app-pos-packages [items]="items" (onClick)="handleChange($event)">
-            
-        </app-pos-packages>
-    </div>
-    
-    <div class="col-md-2 ptcontainer pos-column">
+    <!--<ng-container>
+      <app-pos-header></app-pos-header>
+    </ng-container>-->
 
-        <app-pos-rooms [items]="roomItems" (onClick)="handleChange($event)">
-            
-        </app-pos-rooms>
-    </div>
+    <div class="row text-center">
+        <div class="col-md-2 ptcontainer">
+            <h5 class="pack-heading">1. Select Package</h5>
+            <p class="mini-pack-heading">repeat steps 2 and 3 for each package</p>
+            <div class="pos-column">
+                <app-pos-packages [items]="packages" (onClick)="onPackageClick($event)" *ngIf="!isMobile">
 
-    <div class="col-md-5">
-        <div class="row">
-            <div class="col-md-6 ptcontainer pos-column mr-3">
-                <app-devices [items]="devicesItems" (onClick)="handleChange($event)">
+                </app-pos-packages>
 
-                </app-devices>
+                <ng-select *ngIf="isMobile"
+                           id="packages"
+                           [items]="packages"
+                           (change)="onPackageClick($event)"
+                           bindValue="id"
+                           bindLabel="name"
+                           placeholder="Select Package"
+                ></ng-select>
             </div>
+        </div>
 
-            <div class="col-md-6 ptcontainer pos-column pos-column-description">
-                <div style="padding:10px">
-                    <p class="title">ZWave Controller (Fibaro)</p>
-                    <b>Key Functions: </b><br>
-                    <p class="description">Main Automation Controller providing control interface through Fibaro Mobile, Tablet App and Fibaro Web interface. 
-                        HC3 can communicate and control a large range of Zwave and IP based devices.</p>
+        <div class="col-md-2 ptcontainer pos-column">
+            <h5 class="pack-heading">2. Select Rooms</h5>
+            <p class="mini-pack-heading">to view devices from each package</p>
+            <app-pos-rooms [items]="rooms" (onClick)="onRoomChange($event)" *ngIf="!isMobile">
 
-                        <div align="center" style="height: 41px; left:0; position: absolute; bottom: 0; text-align: center;width: 100%;">
-                            <button  class="decrease description-footer-btn">-</button>
-                            <button class="qty description-footer-btn" >0</button>
-                            
-                            <button class="increase description-footer-btn">+</button>
-                            <button style="width: 35%;" class="addcart description-footer-btn description-footer-btn-last">Add ⇒</button> 
-                        </div>
+            </app-pos-rooms>
+
+            <ng-select *ngIf="isMobile"
+                       id="rooms"
+                       [items]="rooms"
+                       (change)="onRoomChange($event)"
+                       bindValue="id"
+                       bindLabel="name"
+                       placeholder="Select Rooms"
+            ></ng-select>
+        </div>
+
+        <ng-template>
+
+        </ng-template>
+        <div class="col-md-5">
+            <h5 class="pack-heading">3. Select Devices and add desired quantity </h5>
+            <p class="mini-pack-heading">repeat for each room</p>
+            <div class="row">
+                <div class="col-md-6 ptcontainer pos-column">
+                    <app-devices [items]="devices" (onClick)="handleChange($event)" *ngIf="!isMobile">
+
+                    </app-devices>
+                    <ng-select *ngIf="isMobile"
+                               id="devices"
+                               [items]="devices"
+                               (change)="handleChange($event)"
+                               bindValue="id"
+                               bindLabel="name"
+                               placeholder="Select Devices"
+                    ></ng-select>
                 </div>
+
+                <div class="col-md-6" *ngIf="item">
+
+                    <h3 type="button" class="detials-heading" (click)="isCollapsed = !isCollapsed"
+                            [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample" *ngIf="this.isMobile">
+                            Device Details <i class="fas fa-chevron-down"></i>
+                </h3>
+
+                    <div id="collapseExample" [ngbCollapse]="isCollapsed">
+                        <div class="ptcontainer pos-column pos-column-description" style="padding:10px">
+                            <p class="title">
+                                {{item?.name}}
+                            </p>
+                            <b>Device Id: </b><br>
+                            <p class="description">
+                                {{item?.device_id}}
+                            </p>
+                            <b>Model: </b><br>
+                            <p class="description">
+                                {{item?.model}}
+                            </p>
+                            <b>Brand: </b><br>
+                            <p class="description">
+                                {{item?.brand}}
+                            </p>
+                            <b>Key Functions: </b><br>
+                            <p class="description">
+
+                                {{item?.description}}
+
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="d-block">
+                        <button class="decrease description-footer-btn" (click)="adjustQuantity('-')">-</button>
+                        <button class="qty description-footer-btn">{{item?.quantity}}</button>
+                        <button class="increase description-footer-btn" (click)="adjustQuantity('+')">+</button>
+                        <button (click)="addToCart()" class="addcart description-footer-btn description-footer-btn-last"
+                                style="font-weight: bold; width: 40%">Update ⇒
+                        </button>
+                    </div>
+
+                    <div class="mb-2 mt-2" [formGroup]="savingForm" *ngIf="showHideItems.hideSave">
+                        <input type="text" class="form-control" formControlName="title"
+                               placeholder="Enter file name to save">
+                        <span class="text-danger" *ngIf="submitted && f.title.errors">
+                <span>Please enter a name for the kit.</span>
+              </span>
+                        <span class="text-success" *ngIf="savingSuccessMessage">
+                <span>{{savingSuccessMessage}}</span>
+              </span>
+                        <span class="text-success" *ngIf="savingErrorMessage">
+                <span>{{savingSuccessMessage}}</span>
+              </span>
+                    </div>
+
+                </div>
+
+
             </div>
 
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="pos-ul ptcontainer pos-column pos-column-summery">
-            <ul class="cart"></ul>
+        <div class="col-md-3">
+            <h5 class="pack-heading">4. Review Cart </h5>
+            <p class="mini-pack-heading">(kit price includes hardware, configuration and support)</p>
+            <div class="pos-ul ptcontainer  pos-column-summery">
+                <div style="width: 100%;"
+                     class="d-flex flex-row text-center justify-content-center align-content-center">
+                    <div style="width: 50%;" class="tab" [class.tab-active]="selectedTab === 0" (click)="changeTab(0)">
+                        <p>Package Summary</p>
+                    </div>
+                    <div style="width: 50%" class="tab" [class.tab-active]="selectedTab === 1" (click)="changeTab(1)">
+                        <p>Room Summary</p>
+                    </div>
+                </div>
+                <ul class="cart" *ngIf="selectedTab === 0">
+                    <li *ngFor="let item of cart " id="{{item.package_id}}" class="cartitem" style="cursor: pointer;" packageid="130">
+                        {{item.package_title}}
+                        <span>{{item.total_amount | currency}}</span>
+                        <br>
+                        <div class="subcontainer" *ngFor="let subItem of filteringSubItems(item.Items)">
+            <span class="subproduct">
+              {{"  " + subItem.title}}
+              <span class="subqty">X {{subItem.quantity}}</span>
+            </span>
 
-            <ul style="position: absolute; bottom: 0px; left: 0; width: 100%; margin: 0; padding: 0;">
-                <li class="total" total="0">Total Amount <span>$0</span></li>
-            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="cart" *ngIf="selectedTab === 1">
+                    <li *ngFor="let room of filteringCartItemForRoom(cart)" class="cartitem" style="cursor: pointer;">
+                        {{room.title}}
+                        <!--          <span>{{item.total_amount | currency}}</span>-->
+                        <br>
+                        <div class="subcontainer" *ngFor="let device of room.devices">
+            <span class="subproduct" product-id="530" qty="1">
+              {{"  " + device.title}}
+              <span class="subqty">X {{device.quantity}}</span>
+            </span>
 
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div style="border-style: groove;padding: 1% ;text-align: left;">
+                Total Amount <span total="0" style="float: right;">{{totalAmount | currency}}</span>
+            </div>
+            <div class="d-flex flex-row justify-content-between mt-2 mb-3 fixed-fter">
+                <button class="btn btn-footer btn-warning" (click)="saveDraft()" *ngIf="showHideItems.hideSave">Save
+                </button>
+                <button class="btn btn-footer btn-warning" *ngIf="showHideItems.hideUpdate" (click)="updateDraft()">
+                    Update
+                </button>
+                <button class="btn btn-footer btn-warning" *ngIf="showHideItems.hideUpdate"
+                        (click)="openSaveAsModal(content)">
+                    Save As
+                </button>
+                <button class="btn btn-footer btn-warning" (click)="resetSelection()">Reset</button>
+                <button class="btn btn-footer btn-warning" (click)="saveQuotation()">Quote</button>
+                <button class="btn btn-footer btn-warning" (click)="goToCheckOut()">Order</button>
+            </div>
         </div>
     </div>
+
+
 </div>
 
 
-<app-pos-footer></app-pos-footer>
-
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Please enter a new name for the kit</h4>
+        <button type="button" class="close" aria-label="Close" (click)="dismissModel()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="form" [formGroup]="saveAsForm">
+            <div class="form-group">
+                <input type="text" class="form-control" formControlName="title" placeholder="Enter Title"
+                       style="width: 100% !important;">
+                <small id="emailHelp" class="form-text text-danger"
+                       *ngIf="saveAsFormSubmitted && g.email && g.email.errors">
+                    <span *ngIf="g.email.errors.required">Title is required.</span>
+                </small>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-footer btn-warning" (click)="saveAsDraft()">Save</button>
+        <button type="button" class="btn btn-secondary" (click)="dismissModel()">Cancel</button>
+    </div>
+</ng-template>

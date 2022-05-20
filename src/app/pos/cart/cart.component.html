@@ -1,0 +1,183 @@
+<div class="container">
+    <div class="py-1 text-center mb-2">
+        <div class="d-flex justify-content-between">
+
+            <!-- <img src="assets/left-arrow.png" width="50" style="cursor: pointer" (click)="backToMain()"/> -->
+            <h2></h2>
+        </div>
+    </div>
+
+    <div class='cardFlex'>
+        <button class="btn Temp" (click)="backToMain()">Continue Shopping</button>
+        <div class="multistepsform">
+            <ul class="multi-step-form">
+                <li class="active">Shopping Cart</li>
+                <li>Shipping & Payment</li>
+                <li>Order Confirmation</li>
+            </ul>
+        </div>
+    </div>
+    <h4 class="heading-cart mt-3 mb-3 text-right">
+        <span>Shopping Cart</span>
+        <!-- <ng-container *ngIf="items.length > 0">
+          <span class="badge badge-secondary badge-pill">{{items.length}}</span>
+        </ng-container> -->
+    </h4>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th class="text-center">Package</th>
+                <th class="text-center">Product</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-center">Package Price</th>
+                <th class="text-center">GST</th>
+                <th class="text-center">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngFor="let item of cart">
+                <tr>
+                    <!-- <tr *ngFor="let subItem of filteringSubItems(item.Items)"> -->
+                    <td> {{item.package_title}}</td>
+                    <td>
+
+
+                        <div [innerHTML]="getItemslistTitle(item.Items)"></div>
+                    </td>
+                    <td class="text-center">
+                        <div [innerHTML]="getItemslistQuanity(item.Items)"></div>
+
+                    </td>
+                    <td class="text-right">{{item.total_amount | currency}}</td>
+                    <td class="text-right">{{getGstAmt2Digits(item.total_amount) | currency}}</td>
+                    <td class="text-right">{{productTotalPriceAnother(item.total_amount)}}</td>
+                </tr>
+            </ng-container>
+            </tbody>
+            <tfoot>
+
+            <tr class="total-cart-amount">
+                <td>Total</td>
+                <td>&nbsp; &nbsp;&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class="text-right">{{totalAmount | currency}}</td>
+                <td class="text-right">{{GSTAmount | currency}}</td>
+                <td class="text-right">{{roundoff(totalAmount+GSTAmount) | currency}}</td>
+            </tr>
+
+            <tr>
+                <td>Discount ($)</td>
+                <td>&nbsp; &nbsp;&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class="discount-amount text-right">(-{{totalDiscount | currency}})</td>
+                <td class="discount-amount text-right">(-{{GSTDiscount | currency}})</td>
+                <td class="discount-amount text-right">(-{{roundoff(GSTDiscount+totalDiscount) | currency}})</td>
+            </tr>
+
+            <tr class="total-cart-amount">
+                <td>Total After Discount</td>
+                <td>&nbsp; &nbsp;&nbsp;</td>
+                <td>&nbsp;</td>
+                <!--<td class="text-right">{{(totalAmountAfter==0?totalAmount:totalAmountAfter) | currency}}</td>
+                <td class="text-right">{{(GSTAmountAfter==0?GSTAmount:GSTAmountAfter) | currency}}</td>-->
+                <td></td>
+                <td></td>
+                <td class="text-right">
+                    {{roundoff(((totalAmountAfter==0?totalAmount:totalAmountAfter)+(GSTAmountAfter==0?GSTAmount:GSTAmountAfter)))
+                    | currency}}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3">
+                    Payment due now ({{pay_due_now}}%)
+                    <i class="fas fa-info-circle" placement="top" ngbTooltip="{{payment_due_now_tooltip}}"> </i>
+                </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class="text-right"><strong>{{roundoff((((totalAmountAfter==0?totalAmount:totalAmountAfter)+(GSTAmountAfter==0?GSTAmount:GSTAmountAfter))*pay_due_now)/100)
+                    |
+                    currency}}</strong></td>
+            </tr>
+            <tr>
+                <td colspan="3">Payment due on installation({{pay_on_installation}}%)
+                    <i class="fas fa-info-circle" placement="top"
+                       ngbTooltip="{{payment_due_on_installation_tooltip}}"> </i>
+                </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class="text-right"><strong>{{roundoff((((totalAmountAfter==0?totalAmount:totalAmountAfter)+(GSTAmountAfter==0?GSTAmount:GSTAmountAfter))*pay_on_installation)/100)
+                    |
+                    currency}}</strong></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="action-btn d-flex mb-3">
+        <div class="cupon-area">
+            <input type="text" class="form-control" placeholder="Coupon code:" #couponRef>
+            <button class="btn-cupon-apply" *ngIf="this.isApplyButton" (click)="CheckUserCoupon(couponRef.value)">
+                Apply
+            </button>
+            <button class="btn-cupon-apply" *ngIf="this.isRemoveButton" (click)="removeCoupon(couponRef.value)">Remove
+            </button>
+
+            <!-- <div *ngIf = "ErrMessage != ''"> {{ErrMessage}}</div> -->
+        </div>
+        <button class="btn btn-checkout" (click)="goToCheckout()">Checkout</button>
+    </div>
+    <div *ngIf="ErrMessage != ''" style="color:red">**{{ErrMessage}}</div>
+    <div *ngIf="successMessage != ''" style="color:green">**{{successMessage}}</div>
+
+
+    <!--<div class="table">
+      <div class="table-heading">
+        <div class="table-heading-head">Name</div>
+        <div class="table-heading-head"> Sku</div>
+        <div class="table-heading-head"> Price</div>
+        <div class="table-heading-head"> Quantity</div>
+        <div class="table-heading-head"> GST</div>
+        <div class="table-heading-head"> Total</div>
+      </div>
+      <div class="table-body">
+        <div class="table-data">
+          <div *ngFor="let item of cart">
+            <div class="table-sub-item" *ngFor="let subItem of filteringSubItems(item.Items)">
+              <div class="item product-title">
+                {{subItem.title}}<br/> (<small>{{item.package_title}}</small>)
+              </div>
+              <div class="item product-sku">Sku-01</div>
+              <div class="item product-total">{{subItem.price | currency}}</div>
+              <div class="item produt-qty">
+                <span class="qty-controlls">
+                 <i class="fas fa-minus icons"></i>
+                <input type="text" class="qty-number" value="{{subItem.quantity}}"/>
+                <i class="fas fa-plus icons"></i>
+                  {{subItem.quantity}}
+                </span>
+              </div>
+              <div class="item product-gst">$5.00</div>
+              <div class="item product-main-total">{{productTotalPrice(subItem)}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="list-group mb-1">
+      <ng-container *ngIf="cart.length > 0">
+        <li class="list-group-item d-flex justify-content-between">
+          <span style="font-weight: bolder">Total ($)</span>
+          <strong>{{totalAmount | currency}}</strong>
+        </li>
+      </ng-container>
+    </ul>-->
+
+
+</div>
+
+
+

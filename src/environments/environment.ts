@@ -3,7 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  // apiUrl: 'http://sentegrate-api.test/api',
+   //apiUrl: 'https://sentegrate.cyberxstudio.com/sentegrate-api2/public/api',
+  production: false,
+    //apiUrl: 'http://139.162.199.168/sentegrate/public/api',
+    apiUrl: 'https://staging.sentegrate.com.au/public/api',
+    siteUrl: 'https://staging.sentegrate.com.au/'
+
+ /* apiUrl:'https://www.sentegrate.com.au/public/api',
+  siteUrl:'https://www.sentegrate.com.au/public/'*/
 };
 
 /*
