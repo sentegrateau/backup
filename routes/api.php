@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PackageController;
-use App\Http\Controllers\PackageRoomController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,31 +14,53 @@ use App\Http\Controllers\PackageRoomController;
 |
 */
 
-Route::resource("package", "App\Http\Controllers\PackageController");
-Route::resource("room", "App\Http\Controllers\RoomController");
-Route::resource("partner", "App\Http\Controllers\PartnerController");
-Route::resource("package_room", "App\Http\Controllers\PackageRoomController");
-Route::resource("device", "App\Http\Controllers\DeviceController");
-Route::resource('order', 'App\Http\Controllers\OrderController');
-Route::resource('draft', 'App\Http\Controllers\DraftController');
-Route::resource('user', 'App\Http\Controllers\UserController');
-Route::post('save-quotation', 'App\Http\Controllers\DraftController@saveQuotation');
-Route::get('draft-items/{id}', 'App\Http\Controllers\DraftController@getDraftItems');
-
-Route::get('order-items/{id}', 'App\Http\Controllers\OrderController@getOrderItems');
-Route::get('package-rooms/{id}',"App\Http\Controllers\PackageRoomController@packageRooms");
-Route::get('room-devices/{id}',"App\Http\Controllers\PackageRoomController@roomDevices");
-Route::get('minmax-qty','App\Http\Controllers\PackageRoomController@minMaxQty');
-Route::post('upload-image','App\Http\Controllers\ImageUploadController@store');
-Route::put('update-package-order', 'App\Http\Controllers\PackageController@updateOrder');
-Route::put('change-device-status/{id}', 'App\Http\Controllers\DeviceController@changeStatus');
-Route::post('send-email', 'App\Http\Controllers\EmailController@index');
-Route::post('find-or-create-user', 'App\Http\Controllers\UserController@findOrCreateUser');
-Route::post('change-device-image/{id}', 'App\Http\Controllers\DeviceController@changeImage');
-
+Route::get('get-package-with-devices', 'Api\PackageController@getPackageWithDevices');
+Route::get('get-home-owners', 'Api\HomeOwnerController@getHomeOwner');
+Route::post('save-home-owners', 'Api\HomeOwnerController@saveHomeOwner');
+Route::resource("package", "Api\PackageController");
+Route::resource("package", "Api\PackageController");
+Route::resource("room", "Api\RoomController");
+Route::resource("home-owner", "Api\HomeOwnerController");
+Route::resource("partner", "Api\PartnerController");
+Route::resource("package_room", "Api\PackageRoomController");
+Route::post("device/savePackageRoom", "Api\DeviceController@savePackageRoom");
+Route::resource("device", "Api\DeviceController");
+Route::resource('order', 'Api\OrderController');
+Route::resource('draft', 'Api\DraftController');
+Route::post('save-quotation', 'Api\DraftController@saveQuotation');
+Route::get('draft-items/{id}', 'Api\DraftController@getDraftItems');
+Route::get('getStatesList/{id}', 'Api\CountriesController@getStatesList');
+Route::get('order-items/{id}', 'Api\OrderController@getOrderItems');
+Route::get('package-rooms/{id}/{draftId?}', "Api\PackageRoomController@packageRooms")->name('api.package-rooms');
+Route::get('room-devices/{id}', "Api\PackageRoomController@roomDevices");
+Route::get('minmax-qty', 'Api\PackageRoomController@minMaxQty');
+Route::post('upload-image', 'Api\ImageUploadController@store');
+Route::put('update-package-order', 'Api\PackageController@updateOrder');
+Route::put('change-device-status/{id}', 'Api\DeviceController@changeStatus');
+Route::post('send-email', 'Api\EmailController@index');
+Route::post('find-or-create-user', 'Api\UserController@findOrCreateUser');
+Route::post('change-device-image/{id}', 'Api\DeviceController@changeImage');
+Route::post('cart', 'Api\CartController@cart');
+Route::post('get-shipping', 'Api\UserController@getShipping');
+Route::get('getGstSetting', 'Api\CartController@getGstSetting');
+Route::any('updatePaymentStatus', 'Api\OrderController@updatePaymentStatus');
+Route::post('order/update-profile', 'Api\OrderController@updateProfile');
+Route::post('order/update-shipping', 'Api\OrderController@updateShipping');
+Route::post('user/get-user', 'Api\UserController@getUser');
 //Webhook URL For Stripe
-Route::any('stripe_payment','App\Http\Controllers\OrderController@stripe_webhook');
+Route::any('stripe_payment', 'Api\OrderController@stripe_webhook');
+Route::any('getShippingAddress', 'Api\OrderController@getShippingAddress');
+Route::any('getCouponDetails', 'Admin\CouponController@getCouponDetails');
+
+Route::post('delete-order', 'Api\OrderController@deleteOrder');
+Route::post('order-paypal-success', 'Api\OrderController@paypalSuccess');
 
 
 //Payment Routes
-Route::post('charge', 'App\Http\Controllers\PaymentController@charge');
+Route::post('charge', 'Api\PaymentController@charge');
+Route::post('user/uploadBankTransferFile', 'Api\UserController@uploadBankTransferFile')->name('user.uploadBankTransferFile');
+
+Route::get('get-invalid-token-string', 'Api\UserController@getInvalidTokenString');
+
+Route::get('customization-rooms/{orderId}', 'Api\CustomizationController@getRoomsWithOrder')->name('custom.getRoomsWithOrder');
+Route::get('customization-devices/{orderId}/{roomId}', 'Api\CustomizationController@getDevicesWithOrder')->name('custom.getDevicesWithOrder');

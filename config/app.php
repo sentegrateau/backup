@@ -12,8 +12,18 @@ return [
     | any other location as required by the application or its packages.
     |
     */
-
     'name' => env('APP_NAME', 'Laravel'),
+    'admin_email' => env('ADMIN_EMAIL', 'pjtest@yopmail.com'),
+    'mail_from' => env('MAIL_FROM_ADDRESS', 'pjtest@yopmail.com'),
+    'front_url' => env('FRONT_URL', ''),
+    'PAYKUN_MERCHANT_ID' => env('PAYKUN_MERCHANT_ID', ''),
+    'PAYKUN_ACCESS_TOKEN' => env('PAYKUN_ACCESS_TOKEN', ''),
+    'PAYKUN_KEY_SECRET' => env('PAYKUN_KEY_SECRET', ''),
+
+    'TWILIO_SID' => env('TWILIO_SID', ''),
+    'TWILIO_AUTH_TOKEN' => env('TWILIO_AUTH_TOKEN', ''),
+    'TWILIO_NUMBER' => env('TWILIO_NUMBER', ''),
+
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +49,10 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => env('APP_DEBUG', false),
+
+
+    'currencySymbol' => env('CURRENCY_SYMBOL', '$'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,6 +67,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'site_url' => env('SITE_URL', 'http://localhost'),
+
     'asset_url' => env('ASSET_URL', null),
 
     /*
@@ -67,7 +82,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Australia/Sydney',
 
     /*
     |--------------------------------------------------------------------------
@@ -161,7 +176,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -174,7 +189,11 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        JeroenNoten\LaravelAdminLte\ServiceProvider::class,
+        Laravel\Passport\PassportServiceProvider::class,
+        'Intervention\Image\ImageServiceProvider',
+        Unisharp\Ckeditor\ServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
     ],
 
     /*
@@ -191,7 +210,6 @@ return [
     'aliases' => [
 
         'App' => Illuminate\Support\Facades\App::class,
-        'Arr' => Illuminate\Support\Arr::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
         'Blade' => Illuminate\Support\Facades\Blade::class,
@@ -207,7 +225,6 @@ return [
         'File' => Illuminate\Support\Facades\File::class,
         'Gate' => Illuminate\Support\Facades\Gate::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
-        'Http' => Illuminate\Support\Facades\Http::class,
         'Lang' => Illuminate\Support\Facades\Lang::class,
         'Log' => Illuminate\Support\Facades\Log::class,
         'Mail' => Illuminate\Support\Facades\Mail::class,
@@ -215,18 +232,19 @@ return [
         'Password' => Illuminate\Support\Facades\Password::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
-        // 'Redis' => Illuminate\Support\Facades\Redis::class,
+        'Redis' => Illuminate\Support\Facades\Redis::class,
         'Request' => Illuminate\Support\Facades\Request::class,
         'Response' => Illuminate\Support\Facades\Response::class,
         'Route' => Illuminate\Support\Facades\Route::class,
         'Schema' => Illuminate\Support\Facades\Schema::class,
         'Session' => Illuminate\Support\Facades\Session::class,
         'Storage' => Illuminate\Support\Facades\Storage::class,
-        'Str' => Illuminate\Support\Str::class,
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'Image' => Intervention\Image\ImageManagerStatic::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];

@@ -1,0 +1,65 @@
+.deActive-color {
+    color: #e8504d !important;
+}
+
+
+.device-item{    border-radius: 0.357rem;
+    padding: 1rem 1rem 1rem 1.3rem;
+    border: 1px solid #ebe9f1;
+    cursor: pointer;
+    margin-bottom: 0.85rem;
+    /* text-align: center; */
+    font-size: 15px;
+    color: #575757;}
+	
+.device-item:hover{border:solid 1px #77ccfd;}	
+	
+.d-flex{display:flex;}
+.align-items-center{align-items:center;}
+.justify-content-between{justify-content:space-between;}
+
+
+.packages-boxes{padding: 1.5rem 1.5rem;}
+
+.btn-outline-secondary {
+    border: 1px solid #82868b !important;
+    background-color: transparent;
+    color: #82868b;
+}
+
+ .content-header h5{font-size: 16px;
+    font-weight: 600;
+    color: #717171;
+    margin-bottom: 20px;
+}
+
+.packages-boxes .btn{font-size: 15px;}
+
+.package-ftr-group{margin-top:20px}
+
+.scroll-bars{  height:308px;
+
+  overflow-y: auto;
+  overflow-x: hidden;}
+	
+.scroll-bars::-webkit-scrollbar-track
+{
+	background-color: lightgray;
+}
+.scroll-bars:hover::-webkit-scrollbar
+{
+  display: block;
+}
+.scroll-bars::-webkit-scrollbar
+{
+	width:5px;
+	background-color: #F5F5F5;
+  display:none;
+}
+
+.scroll-bars::-webkit-scrollbar-thumb
+{
+	background-color: #575757;
+}	
+	
+	.custom-control-label{display: block;}

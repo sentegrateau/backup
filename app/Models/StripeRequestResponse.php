@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
 
 class StripeRequestResponse extends Model
 {
-    use HasFactory;
+
     protected $table = 'stripe_request_responses';
 }
