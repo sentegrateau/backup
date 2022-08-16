@@ -7,11 +7,15 @@ export const environment = {
    //apiUrl: 'https://sentegrate.cyberxstudio.com/sentegrate-api2/public/api',
   production: false,
     //apiUrl: 'http://139.162.199.168/sentegrate/public/api',
-    apiUrl: 'https://staging.sentegrate.com.au/public/api',
-    siteUrl: 'https://staging.sentegrate.com.au/'
+   /* apiUrl: 'http://localhost/sentegrate/public/api',
+    siteUrl: 'http://localhost/sentegrate/'*/
 
- /* apiUrl:'https://www.sentegrate.com.au/public/api',
-  siteUrl:'https://www.sentegrate.com.au/public/'*/
+  /*apiUrl:'https://staging.sentegrate.com.au/public/api',
+  siteUrl:'https://staging.sentegrate.com.au/public/'
+  apiUrl:'https://66.29.155.198/public/api',
+  siteUrl:'https://66.29.155.198/public/'*/
+    apiUrl:'https://www.sentegrate.com.au/public/api',
+  siteUrl:'https://www.sentegrate.com.au/public/'
 };
 
 /*

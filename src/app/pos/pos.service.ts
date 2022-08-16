@@ -169,9 +169,9 @@ export class PosService {
     /**
      * Checkout Session Creation
      */
-    checkout(data?: any): Observable<any> {
-         console.log(data);
-        return this.http.post(`${this.APP_URL}/order`, data).pipe(
+    checkout(data?: any,partner?: string): Observable<any> {
+         console.log(partner);
+        return this.http.post(`${this.APP_URL}/order/`+ partner ,data).pipe(
             tap((res: any) => {
                 sessionStorage.removeItem('quotation');
                 sessionStorage.removeItem('cart_items');
@@ -240,9 +240,8 @@ export class PosService {
     );
   }
 
-  checkoutPaypalSuccess(data?: any): Observable<any> {
-    console.log(data);
-    return this.http.post(`${this.APP_URL}/order-paypal-success`, data).pipe(
+  checkoutPaypalSuccess(data?: any,partner?: string): Observable<any> {
+    return this.http.post(`${this.APP_URL}/order-paypal-success/`+partner, data).pipe(
       tap((res: any) => {
 
       }),

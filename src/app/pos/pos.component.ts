@@ -111,7 +111,7 @@ export class PosComponent implements OnInit, OnDestroy {
           this.token = param.token;
           sessionStorage.setItem('token', param.token);
           const decodedToken: DecodedToken = jwt_decode(param.token);
-
+       //   console.log(decodedToken.partner_id);
           if (decodedToken.role2 === 'owner') {
             this.route.navigate(['invalid-token']);
           }
@@ -574,9 +574,20 @@ export class PosComponent implements OnInit, OnDestroy {
         package_id: selectedPackage.id,
         package_title: selectedPackage.name,
         Items: [device]
-      });
+      }); 
+
+/*Sorting for cart Items code*/
+/*this.cart.sort(function (a, b) {
+    return a.package_id - b.package_id;
+});
+   console.log(this.cart);*/
+
     }
   }
+
+
+
+
 
   /**
    * Saving Draft
@@ -947,9 +958,9 @@ export class PosComponent implements OnInit, OnDestroy {
       getDraft = JSON.parse(<string> sessionStorage.getItem('quotation'));
     }
 
-    this.cartCopyOfDraftOrQuotation = this.cart;
-    if (this.cartComparison()) {
-      const draftData = DraftManagement.draftData(this.cartCopyOfDraftOrQuotation, this.user, this.partner, this.singleDraft.title);
+    //this.cartCopyOfDraftOrQuotation = this.cart;
+    //if (this.cartComparison()) {
+      const draftData = DraftManagement.draftData(this.cart, this.user, this.partner, this.singleDraft.title);
       draftData.total_amount = draftData.draft_items.reduce((total: number, record: any) => {
         return total + (record.price * record.quantity);
       }, 0);
@@ -958,7 +969,7 @@ export class PosComponent implements OnInit, OnDestroy {
       }
       if (getDraft) {
         // @ts-ignore
-        draftData.draft_id = getDraft['id'];
+       draftData.draft_id = getDraft['id'];
       }
 
     if (this.singleDraft && this.cart.length){
@@ -1046,9 +1057,9 @@ export class PosComponent implements OnInit, OnDestroy {
     }
 
 
-    } else {
+   /* } else {
       this.toaster.error('Error');
-    }
+    }*/
     /*  } else {
         this.toaster.warning('Can not create Quotation, first make kit');
       }*/
@@ -1298,47 +1309,52 @@ export class PosComponent implements OnInit, OnDestroy {
       const activeDevice = this.devices.find(x => x.selected === true);
       const deviceExistsInCart = this.cart[indexOfExistedPackage].Items.find(x => x.id === activeDevice.id);
       const products=this.cart[indexOfExistedPackage].Items;
-      var itemid = [];
+      var cartitemid = [];
 
-    for (let i = 0; i < this.cart.length; i++) {
+         for (let i = 0; i < this.cart.length; i++) {
 
            let itemlen=this.cart[i].Items.length;
 
            for (let j = 0; j < itemlen; j++) 
            {
-            itemid.push(this.cart[i].Items[j].id);
+            cartitemid.push(this.cart[i].Items[j].id);
 
            }
 
         }   
- 
 
-         if ( itemid.includes(53) && itemid.includes(54) || itemid.includes(53) && itemid.includes(1) || itemid.includes(1) && itemid.includes(54)  || itemid.includes(57) && itemid.includes(54) || itemid.includes(1) && itemid.includes(57) || itemid.includes(53) && itemid.includes(57) )
+        var controllerid:any = [1,53,54];
+      var deviceid:any = [20,21,42,43];
+
+      var comparrayconrlor:any[] = [];
+      var comparraydevice:any[] = [];
+
+      cartitemid.forEach((y) => {
+                
+         if(controllerid.indexOf(y) > -1 ){
+            comparrayconrlor.push(y)
+        }
+      })
+
+       cartitemid.forEach((z) => {
+                
+         if(deviceid.indexOf(z) > -1 ){
+            comparraydevice.push(z)
+        }
+      })
+
+       if(comparrayconrlor.length > 1)
+        {
+           this.toaster.error('More than one Zwave controller can not be selected');
+        }
+        else if(comparrayconrlor.length==1 && comparraydevice.length==0){
+            this.toaster.error('Please select Zwave device');
+        }
+         else if( comparraydevice.length>0 && comparrayconrlor.length == 0 )
          {
-                  this.toaster.error('More than one Zwave controller can not be selected');
+              this.toaster.error('Please select at least one Zwave controller');
          }
 
-         else if ( (itemid.includes(20)  || itemid.includes(21) || itemid.includes(42) || itemid.includes(43) ) && (itemid.includes(53) || itemid.includes(54) || itemid.includes(1) || itemid.includes(57)))
-         {
-           // setting up cart itmes to the session storage
-      sessionStorage.removeItem('cart_items');
-      sessionStorage.removeItem('quotation');
-      sessionStorage.setItem('cart_items', JSON.stringify(this.cart));
-      sessionStorage.setItem('quotation', JSON.stringify(this.singleDraft));     
-      this.route.navigate(['/cart']);
-
-         }  
-         
-
-         else if ( itemid.includes(20) || itemid.includes(21) || itemid.includes(42) || itemid.includes(43)) 
-         {
-                  this.toaster.error('Please select at least one Zwave controller');
-         } 
-
-     /*   else if (itemid.includes(53) || itemid.includes(54) || itemid.includes(1) || itemid.includes(57)){
-
-                this.toaster.error('Please select Zwave device');
-         }*/
         
          else {
        // setting up cart itmes to the session storage

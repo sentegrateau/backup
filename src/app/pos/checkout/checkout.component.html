@@ -251,7 +251,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-2">
                         <label>Set/Update Password 
-                         <i  title="{{getUserData.settings.pass_tooltip}}" class="fa fa-info-circle" aria-hidden="true" style="font-size: 18px;color: #f38022;"></i>
+                         <i  *ngIf='usertypes==1' title="{{getUserData.settings.pass_tooltip}}" class="fa fa-info-circle" aria-hidden="true" style="font-size: 18px;color: #f38022;"></i>
                         </label>
                         <div class="password-hide-show">
                             <input class="form-control" formControlName="password" placeholder="******" name="password"
@@ -419,37 +419,42 @@
             </div>
 
 
-            <div *ngIf='showShippingDetails==0' (click)="AddShippingAddress()" style="color: #13C2FB;cursor: pointer;">
-                <i class="fa fa-plus icons-back">Add Shipping Address</i>
-            </div>
+            <div *ngIf='showShippingDetails==0'>
+                <a class="edit-address" (click)="AddShippingAddress()"><i class="fa fa-edit icons-back"></i>Shipping and
+                    Billing Address <span class="span-imp">*</span></a>
+                    </div>
+            <div *ngIf='showShippingDetails==3'>
+                <a class="edit-address" (click)="AddShippingAddress()"><i class="fa fa-edit icons-back"></i>Shipping and
+                    Billing Address <span class="span-imp">*</span></a>
+                    </div>
             <div *ngIf='showShippingDetails==2'>
                 <a class="edit-address" (click)="AddShippingAddress()"><i class="fa fa-edit icons-back"></i>Shipping and
                     Billing Address <span class="span-imp">*</span></a>
                 <!-- <span style="color: blue;">  </span> -->
                 <h5 style="font-size: 15px;padding-top: 5px;font-weight: bold;">Shipping Address</h5>
                 <span> {{shipping_first_name}} </span>
-                <span> {{shipping_last_name}}</span>,<br>
+                <span> {{shipping_last_name}}</span><br>
                 <!--<span> {{shipping_email}} </span><br>-->
-                <span> {{shipping_address}}</span>,<br>
+                <span> {{shipping_address}}</span><br>
                 <div *ngIf='shipping_address_2'>
-                    <span> {{shipping_address_2}}</span>,<br>
+                    <span> {{shipping_address_2}}</span><br>
                 </div>
-                <span> {{shipping_city}}</span>,<br>
-                <span> {{shipping_state}} {{shipping_zip}}, {{shipping_country}}</span>
+                <span> {{shipping_city}}</span><br>
+                <span> {{shipping_state}} {{shipping_zip}} {{shipping_country}}</span>
                 <br/>
 
             </div>
             <div *ngIf="showShippingDetails==2">
                 <h5 style="font-size: 15px;font-weight: bold;padding-top: 5px;">Billing Address</h5>
                 <span> {{billing_first_name}} </span>
-                <span> {{billing_last_name}} </span>,<br>
+                <span> {{billing_last_name}} </span><br>
                 <!--<span> {{billing_email}} </span><br>-->
-                <span> {{billing_address}}</span>,<br>
+                <span> {{billing_address}}</span><br>
                 <div *ngIf='billing_address_2'>
-                    <span> {{billing_address_2}} </span>,<br>
+                    <span> {{billing_address_2}} </span><br>
                 </div>
-                <span> {{billing_city}} </span>,<br>
-                <span> {{billing_state}} {{billing_zip}}, {{billing_country}} </span>
+                <span> {{billing_city}} </span><br>
+                <span> {{billing_state}} {{billing_zip}} {{billing_country}} </span>
             </div>
             <ng-container *ngIf="!sameAdd && showShippingDetails==1">
                 <h4 class="heading-cart mb-2 mt-3">Billing Address</h4>
@@ -528,7 +533,7 @@
                                 <span *ngIf="g.state.errors.required">State is required.</span>
                             </small>
                         </div>
-                        <div class="col-md-6 mb-2" *ngIf='isCountryAusBill==true'>
+                        <div  class="col-md-6 mb-2"  *ngIf='isCountryAusBill==true'>
                             <label for="stateB">State <span class="span-imp">*</span></label>
                             <ng-select
                                     id="stateB"

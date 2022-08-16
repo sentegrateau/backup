@@ -8,7 +8,8 @@ import {ToastrService} from 'ngx-toastr';
 import {countries, Countries} from '../data/countries';
 import {states, States} from '../data/states';
 import {NgxSpinnerService} from 'ngx-spinner';
-import {FilteredItem, User} from '../../model/interfaces';
+import jwt_decode from 'jwt-decode';
+import {DecodedToken,FilteredItem, User} from '../../model/interfaces';
 import {environment} from '../../../environments/environment';
 import {LocationStrategy} from '@angular/common';
 
@@ -35,6 +36,7 @@ export class CheckoutComponent implements OnInit {
   public conshowPassword: boolean;
   public showProfileDetails = 1;
   public checkoutForm: FormGroup;
+  public ContactForm: FormGroup;
   public billingAddressForm: FormGroup;
   public submitted = false;
   public isCountryAusShip = false;
@@ -93,6 +95,7 @@ export class CheckoutComponent implements OnInit {
 
   public pay_on_installation = 0;
   showShippingDetails: number = 2;
+  usertypes: number = 1; 
   public pay_due_now = 0;
 
   constructor(location: LocationStrategy,
@@ -105,6 +108,12 @@ export class CheckoutComponent implements OnInit {
               private el: ElementRef) {
     this.getUserData = sessionStorage.getItem('user');
     this.getUserData = JSON.parse(this.getUserData);
+
+     var param:any = sessionStorage.getItem('token');
+    // console.log(param);
+          var decodedToken: DecodedToken = jwt_decode(param);
+       //   console.log(decodedToken.partner_id);
+
     this.reloadIfNull();
     this.getSettings(() => {
       this.getItemsFromLocalStorage();
@@ -124,9 +133,39 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.shipping_data = sessionStorage.getItem('shippingDetails');
+
+      const shipping_address = this.shipping_address = sessionStorage.getItem('shipping_address');
+      const shipping_address_2 = this.shipping_address_2 = sessionStorage.getItem('shipping_address_2');
+      const shipping_first_name = this.shipping_first_name = sessionStorage.getItem('shipping_first_name');
+      const shipping_last_name = this.shipping_last_name = sessionStorage.getItem('shipping_last_name');
+      const shipping_state = this.shipping_state = sessionStorage.getItem('shipping_state');
+      const shipping_zip = this.shipping_zip = sessionStorage.getItem('shipping_zip');
+      const shipping_city = this.shipping_city = sessionStorage.getItem('shipping_city');
+      const shipping_email = this.shipping_email = sessionStorage.getItem('shipping_email');
+      const shipping_country = this.shipping_country = sessionStorage.getItem('shipping_country');
+  
     if (this.shipping_data == 'null') {
       this.showShippingDetails = 0;
     }
+    console.log(this.shipping_first_name);
+    if(this.shipping_first_name =="" && this.shipping_address =="" && this.shipping_address_2 =="" && this.shipping_last_name =="" && this.shipping_state =="" && this.shipping_zip =="" && this.shipping_city =="" && this.shipping_country =="")
+    {
+           this.showShippingDetails = 3;
+    }
+
+      var param:any = sessionStorage.getItem('token');
+          var decodedToken: DecodedToken = jwt_decode(param);
+       //   console.log(decodedToken.partner_id);
+       if (decodedToken.partner_id=="dhs")
+       {
+         this.usertypes=1;
+       }
+       else{
+
+         this.usertypes=0;
+
+       }
+
     // this.getShippAdress();
     this.formGroupInit();
     this.billingAddressFormGroup();
@@ -142,6 +181,9 @@ export class CheckoutComponent implements OnInit {
 
   AddShippingAddress() {
     this.showShippingDetails = 1;
+     if (this.shipping_data == 'null') {
+    this.isCountryAusShip = true;
+  }
     // parent.window.location.href = environment.siteUrl+'user/profile';
   }
 
@@ -202,7 +244,17 @@ export class CheckoutComponent implements OnInit {
         country: [shipping_country, Validators.required],
         state: [shipping_state, Validators.required],
         city: [shipping_city, Validators.required],
-        zip: [shipping_zip, Validators.required]
+        zip: [shipping_zip, Validators.required],
+       
+
+      }, {validators: this.ConfirmedValidator('password', 'confirm_password')});
+      this.ContactForm = this.fb.group({
+        name: [getUser.name, Validators.required],
+        contact: [getUser.contact, Validators.required],
+        company: [getUser.company, Validators.required],
+        abn: [getUser.abn, Validators.required],
+        password: ['', [Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{6,}')]],
+        confirm_password: ['', [Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{6,}')]]     
       }, {validators: this.ConfirmedValidator('password', 'confirm_password')});
     } else {
       const shipping_country = this.shipping_country = 'Australia';
@@ -216,14 +268,25 @@ export class CheckoutComponent implements OnInit {
         confirm_password: ['', [Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{6,}')]],
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
-        //email: ['', Validators.compose([Validators.required, Validators.email])],
+       // email: ['', Validators.compose([Validators.required, Validators.email])],
         phone: ['', Validators.required],
         address: ['', Validators.required],
         address2: [''],
         country: ['', Validators.required],
         state: ['', Validators.required],
         city: ['', Validators.required],
-        zip: ['', Validators.required]
+        zip: ['', Validators.required],
+
+
+      }, {validators: this.ConfirmedValidator('password', 'confirm_password')});
+
+       this.ContactForm = this.fb.group({
+        name: [getUser.name, Validators.required],
+        contact: [getUser.contact, Validators.required],
+        company: [getUser.company, Validators.required],
+        abn: [getUser.abn, Validators.required],
+        password: ['', [Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{6,}')]],
+        confirm_password: ['', [Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{6,}')]]      
       }, {validators: this.ConfirmedValidator('password', 'confirm_password')});
     }
   }
@@ -264,7 +327,7 @@ export class CheckoutComponent implements OnInit {
     this.billingAddressForm = this.fb.group({
       firstName: [billing_first_name, Validators.required],
       lastName: [billing_last_name, Validators.required],
-      email: [billing_email, Validators.required],
+     // email: [billing_email, Validators.required],
       phone: [billing_phone, Validators.required],
       address: [billing_address, Validators.required],
       address2: [billing_address_2],
@@ -294,12 +357,13 @@ export class CheckoutComponent implements OnInit {
       this.toaster.error('please accept terms and conditions.');
       return;
     }
-
-      if (this.checkoutForm.invalid) {
+      if(this.checkoutForm.invalid)
+      {
       //this.errorAddress = err;
        this.toaster.error('Contact/Shipping Details are Missing');
       return;
     }
+   
 
 
     const billingData = this.sameAdd ? this.getFormValues(this.checkoutForm.value) : this.getFormValues(this.billingAddressForm.value);
@@ -320,11 +384,16 @@ export class CheckoutComponent implements OnInit {
         paid_amount: (((this.totalAmountDisShipping) * this.pay_due_now) / 100),
       };
       this.spinner.show();
-      this.posService.checkout(data).subscribe(
+      var param:any = sessionStorage.getItem('token');
+     console.log(param);
+          var decodedToken: DecodedToken = jwt_decode(param);
+          console.log(decodedToken.partner_id);
+
+      this.posService.checkout(data,decodedToken.partner_id).subscribe(
         (res: any) => {
           this.spinner.hide();
           // this.route.navigate(['/order-success']);
-          location.href = environment.siteUrl + 'thank-you/' + res.order.id;
+          location.href = environment.siteUrl + 'thank-you/' + res.order.id +'/'+ decodedToken.partner_id ;
         }, error => {
           this.spinner.hide();
           this.toaster.error('Error in creating stripe sessions');
@@ -335,10 +404,12 @@ export class CheckoutComponent implements OnInit {
 
   public updateProfile(): void {
     this.submitted = true;
-    let err = this.getFormValidationErrors();
-    if (this.checkoutForm.invalid) {
-      //this.errorAddress = err;
-      return;
+    //let err = this.getFormValidationErrors();
+    if (this.ContactForm.invalid) {
+    //  this.errorAddress = err;
+       //  this.toaster.error('Profile Details are Missing');
+
+    //  return;
     }
     const userInfo = this.getUserValues(this.checkoutForm.value);
     userInfo.user_id = this.orderData().user_id;
@@ -351,8 +422,10 @@ export class CheckoutComponent implements OnInit {
       (res: any) => {
         this.spinner.hide();
         this.toaster.success('Updated Successfully...');
+        const settingtooltip=this.getUserData.settings;
         this.getUserData = sessionStorage.getItem('user');
         this.getUserData = JSON.parse(this.getUserData);
+        this.getUserData.settings=settingtooltip;
         this.showProfileDetails = 1;
       }, error => {
         this.spinner.hide();
@@ -363,10 +436,12 @@ export class CheckoutComponent implements OnInit {
 
   public updateShipping(): void {
     this.submitted = true;
-    let err = this.getFormValidationErrors();
-    if (this.checkoutForm.invalid) {
-      //this.errorAddress = err;
-      return;
+   //let err = this.getFormValidationErrors();
+  //  console.log(this.billingAddressForm);
+    if (this.billingAddressForm.invalid) {
+     // this.errorAddress = err;
+     // this.toaster.error('Shipping Details are Missing');
+    // return;
     }
     const billingData = this.sameAdd ? this.getFormValues(this.checkoutForm.value) : this.getFormValues(this.billingAddressForm.value);
     const shippingData = this.getFormValues(this.checkoutForm.value);
@@ -665,6 +740,8 @@ export class CheckoutComponent implements OnInit {
            this.toaster.error('Contact/Shipping Details are Missing');
             return;
           } 
+
+         
           // tslint:disable-next-line:max-line-length
           const billingData = this.sameAdd ? this.getFormValues(this.checkoutForm.value) : this.getFormValues(this.billingAddressForm.value);
           const shippingData = this.getFormValues(this.checkoutForm.value);
@@ -696,8 +773,8 @@ export class CheckoutComponent implements OnInit {
               address: {
                 address_line_1: billingData.address,
                 address_line_2: this.billing_address_2,
-                admin_area_2: billingData.state,
-                admin_area_1: billingData.city,
+                admin_area_1: billingData.state,
+                admin_area_2: billingData.city,
                 postal_code: billingData.zip,
                 country_code: 'AU'
               },
@@ -727,15 +804,19 @@ export class CheckoutComponent implements OnInit {
               order_id: this.getOrderData.order.id,
               email: orderData.payer.email_address
             };
-            this.posService.checkoutPaypalSuccess(dataVal).toPromise().then(res => {
+            var param:any = sessionStorage.getItem('token');
+             var decodedToken: DecodedToken = jwt_decode(param);
+
+            this.posService.checkoutPaypalSuccess(dataVal,decodedToken.partner_id).toPromise().then(res => {
               this.spinner.hide();
 
               // Full available details
               const orderValues = (orderData.purchase_units[0].invoice_id).split('-');
               sessionStorage.removeItem('quotation');
               sessionStorage.removeItem('cart_items');
+              
               // this.route.navigate(['/order-success']);
-              location.href = environment.siteUrl + 'thank-you/' + orderValues[2];
+              location.href = environment.siteUrl + 'thank-you/' + orderValues[2] +'/'+ decodedToken.partner_id;
             });
           }
         });
@@ -860,6 +941,9 @@ export class CheckoutComponent implements OnInit {
           }
           if (res.data.billing_phone != null) {
             this.billing_phone = res.data.billing_phone;
+          }
+          if (res.data.shipping_country != null) {
+            this.shipping_country = res.data.shipping_country;
           }
           if (res.data.shipping_country != null) {
             this.shipping_country = res.data.shipping_country;
